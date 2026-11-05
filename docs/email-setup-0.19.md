@@ -1,6 +1,6 @@
 # Resend verification and recovery
 
-The local adapter and provider-contract tests are implemented. No provider account, DNS records or real emails were created. The owner selected Resend and deferred domain details. Do not enable delivery until the following values are supplied and checked.
+The Resend adapter and provider-contract tests are implemented. A clone contains no provider account, credentials or DNS configuration. Real inbox delivery has not been verified for this project. Sending is opt-in; the default development server uses a private local outbox. Configure and test the following values before enabling real mail.
 
 ## Details needed
 
@@ -9,14 +9,16 @@ The local adapter and provider-contract tests are implemented. No provider accou
 3. Resend's exact verification records for that sending domain. Add the SPF and DKIM records shown in its dashboard and confirm the domain becomes verified. Review DMARC with the domain's existing mail setup. Do not invent DNS values or overwrite existing mail records. Disable click/open tracking for authentication emails.
 4. A Resend API key with **Sending access**, restricted to that domain. Store it in the private key file below, not chat, source code, command arguments or a public browser variable.
 5. An explicitly authorized test inbox. Local real-mail mode refuses any recipient outside the configured list, including old queued messages after an allowlist change.
-6. Intended game HTTPS origin, when decided. For a local inbox test the link uses the loopback origin and must be opened on this Mac. The test does not need a public deployment or tunnel.
+6. Intended game HTTPS origin, when decided. For a local inbox test the link uses the loopback origin and must be opened on the computer running your development server. The test does not need a public deployment or tunnel.
 
 ## Private local configuration
 
-Prepared workspace files (both mode 600, under the private `.runtime/email` directory):
+Create these files locally; they are intentionally absent from a public clone.
+Use a private directory such as `.runtime/email` (mode 700), and restrict both
+files to mode 600. Do not overwrite existing credentials or commit either file:
 
-- `config.json`: currently `provider: "disabled"` with placeholders. Change to `resend` only after completing every field.
-- `resend-key.txt`: currently empty. Paste only the sending API key into this file.
+- `config.json`: use the structure below with your actual sender and test inbox.
+- `resend-key.txt`: store only the sending API key, using a local editor.
 
 The JSON fields are:
 
@@ -32,17 +34,23 @@ The JSON fields are:
 
 An empty allowlist is rejected in loopback mode. On a future HTTPS production server an empty list permits real players; preserve a list for controlled staging. The runtime uses only `https://api.resend.com/emails`; there is no configurable external endpoint. It validates configuration before accepting requests. Private config/key files cannot be symlinks or readable by other users.
 
-For an isolated local rehearsal, after supplying details:
+For an isolated local rehearsal from the repository root, after supplying details:
 
 ```sh
 HI_MAIL_CONFIG=/absolute/private/path/config.json \
-HI_LOCAL_REHEARSAL=1 HI_REQUIRE_VERIFIED_EMAIL=1 \
-HI_PUBLIC_ORIGIN=http://127.0.0.1:4180 \
-HI_DATA_DIR=/absolute/private/rehearsal-data \
-node server.mjs
+HI_REQUIRE_VERIFIED_EMAIL=1 HOSTILE_PREVIEW_PORT=4180 \
+HI_PREVIEW_DATA_DIR=/absolute/private/rehearsal-data \
+npm run dev:server
 ```
 
-Do not launch a second process against the user's live account database. Use the portable package and a separate data directory. The managed development preview defaults to local outbox simulation; configuring an unrelated shell does not reconfigure that running process.
+Use a fresh absolute data directory; never launch a second process against an
+existing account database. Open the account page on port 4180 on the same
+computer. This source-server rehearsal does not require the art pack. Configuring
+an unrelated shell does not reconfigure an already-running preview.
+
+For a portable package, run `node server.mjs` from the package directory instead.
+It uses `PORT`, `HI_DATA_DIR`, `HI_PUBLIC_ORIGIN` and `HI_LOCAL_REHEARSAL=1` for a
+loopback rehearsal; source-preview variables do not configure that server.
 
 ## Delivery behavior and operating controls
 
@@ -64,6 +72,6 @@ Schema 4 stores these jobs. Back up schema-3 data before upgrading; old 0.18 exe
 
 ## Remaining live acceptance test
 
-After credentials/domain/test inbox are supplied, request verification through the UI, confirm arrival in that inbox, inspect authentication/tracking settings, confirm the link on this Mac, request password recovery, reset, verify old-session revocation and fresh login, and check rank/contribution remain intact. Try a used/expired link. Inspect Resend's accepted/delivered/bounce status for the same message IDs. Only then label real mail delivery verified. No deployment is required or authorized.
+After credentials/domain/test inbox are supplied, request verification through the UI, confirm arrival in that inbox, inspect authentication/tracking settings, confirm the link on the computer running your server, request password recovery, reset, verify old-session revocation and fresh login, and check rank/contribution remain intact. Try a used/expired link. Inspect Resend's accepted/delivered/bounce status for the same message IDs. Only then label real mail delivery verified. No deployment is required or authorized.
 
 Primary references: [Resend sending API](https://resend.com/docs/api-reference/emails/send-email), [idempotency](https://resend.com/docs/dashboard/emails/idempotency-keys), [domain verification](https://resend.com/docs/dashboard/domains/introduction), [sending-only API keys](https://resend.com/changelog/new-api-key-permissions).

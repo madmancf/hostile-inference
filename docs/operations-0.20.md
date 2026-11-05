@@ -1,6 +1,6 @@
 # Hostile Inference — local operating procedures
 
-Build 0.20.0. Local implementation and rehearsals only; nothing deployed. Node 24+ on a Unix host. Full graphics, simulation rules and the approved leaderboard formula are unchanged. Sustained local capacity evidence is recorded separately from hosted capacity and 60 FPS certification.
+Build 0.20.0. Local implementation and rehearsals only; no hosted service deployed. Use Node 24 or 26 on Linux or macOS (WSL2 on Windows). Full graphics, simulation rules and the approved leaderboard formula are unchanged. Sustained local capacity evidence is recorded separately from hosted capacity and 60 FPS certification.
 
 ## Operator access
 
@@ -90,7 +90,13 @@ Retain the original directory until the restored instance is accepted. A backup 
 
 The local tests inject crashes, timeouts, storage failures before and after commit, repeated finalization, bounded exhaustion, operator retry, a hard process kill and corrupted backups. All three factions produce verified victories through recovery. The v0.17 baseline includes a portable Node 24 update/rollback drill. Version 0.19 separately verifies schema-2 backup migration, current-schema restore and packaged account controls; exact current receipts specify which release was exercised. Background browser checks cover saved results, delayed verification, operator recovery and normal faction entry.
 
-The source workspace retains `docs/local-build-0.19.md` and `provenance/servers/local-game-v0.19-verification.json` with exact build/test evidence. Remaining public gates include real email delivery and support contacts, hosted capacity and edge controls, newcomer playtests, full-quality FPS certification, rights review and real hosting/origin/backup scheduling. No deployment is authorized by these procedures.
+Historical maintainer receipts are private and are not included in this source
+release. Public contributors can reproduce the checks listed in the test guide
+and inspect CI results; those runs have their own scope and do not reproduce the
+historical full-graphics or capacity measurements. Remaining launch gates include
+real email delivery and support contacts, hosted capacity and edge controls,
+newcomer playtests, full-quality FPS certification, art rights and real
+hosting/origin/backup scheduling. No deployment is authorized by these procedures.
 
 ## Account and standings controls (0.19)
 

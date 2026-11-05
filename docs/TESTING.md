@@ -9,7 +9,7 @@ or account credential is needed. `npm ci` installs the lockfile's dependencies.
 | `npm run check` | Syntax checks for tracked JavaScript, excluding vendored code |
 | `npm test` | Deterministic gameplay, faction tech/AI, renderer geometry, account/replay/leaderboard, mail fixture and recovery regressions |
 | `npm run check:public` | Tracked file/secret/privacy scan and local Markdown links |
-| `npm run test:browser` | Background account signup/login/allegiance/history/leaderboard UI for all three factions |
+| `npm run test:browser` | Contributor home, missing-art game links, account signup/login/allegiance/history/leaderboard UI for all three factions; fails on page errors and failed local resources |
 | `HI_BROWSER_GAME=1 npm run test:browser` | Adds full-graphics tutorial startup for all factions; requires original runtime assets |
 | `npm run check:assets` | Exact full-quality runtime file fingerprints; missing art is an explicit failure |
 | `npm run test:enemy-balance` | Existing wider balance matrix; one policy, not comprehensive fairness evidence |
@@ -24,7 +24,9 @@ for Testing binary. The normal macOS Google Chrome application is forbidden.
 All owned processes, contexts and temporary account data close on completion.
 
 `npm run dev:server` starts the loopback development server without requiring
-art; account and leaderboard pages work. The 3D page still needs the asset pack.
+art; account and leaderboard pages work. Without art, entry and game routes show
+an explicit contributor workspace. The default browser check forces that mode
+even on a maintainer's checkout so private assets cannot conceal missing files.
 `npm start` checks assets before starting that same server. Use
 `HOSTILE_PREVIEW_PORT` for a different port. Never reuse another player's data
 directory for testing. The optional `npm run preview:managed` is macOS-only.

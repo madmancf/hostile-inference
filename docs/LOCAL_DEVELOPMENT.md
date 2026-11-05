@@ -20,10 +20,13 @@ and leaderboard features without that pack:
 npm run dev:server
 ```
 
-Once the terminal reports that the server is ready, enter either address in
-your browser's address bar:
+Once the terminal reports that the server is ready, enter the first address in
+your browser's address bar. A checkout without art opens a contributor workspace
+with working account and standings links. The other addresses open those tools
+directly:
 
 ```text
+http://127.0.0.1:4178/
 http://127.0.0.1:4178/account/index.html
 http://127.0.0.1:4178/leaderboards/index.html
 ```
@@ -32,6 +35,12 @@ The server binds to loopback and stores its private data under `.runtime/` in
 this checkout. These commands do not publish or expose a service to the internet.
 Stop the foreground server with Ctrl+C. Use `HOSTILE_PREVIEW_PORT` to choose a
 different port when another local process already uses 4178.
+
+Tutorial, practice and operation links explain the missing pack instead of
+loading an incomplete game. No public pack download is currently available.
+After adding authorized assets, restart the server to enable the game pages.
+To inspect the contributor workspace even with art installed, use
+`HI_PREVIEW_SOURCE_ONLY=1 npm run dev:server`.
 
 ## Full 3D game
 

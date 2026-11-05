@@ -12,6 +12,11 @@ A browser RTS about runaway models, corporate rivalry and keeping the servers al
 
 </div>
 
+**Development source release — no hosted playable demo.** You can work on the
+simulation, accounts and standings now. The complete 3D game requires an external
+art pack that is not publicly available; redistribution rights remain unresolved.
+See [what is included](docs/ASSETS.md) before setting up the game.
+
 ## Choose your laboratory
 
 | Misanthropic | Closed AI | Broke Labs |
@@ -46,11 +51,6 @@ Pick a focused task from the [roadmap](docs/ROADMAP.md), read the
 [contribution guide](.github/CONTRIBUTING.md), and open a PR. Coding assistants
 should start with [AGENTS.md](AGENTS.md). All contributions receive maintainer review.
 
-**Source release:** the public clone runs simulation, server and account tests.
-The external generated art pack is not included while redistribution rights are
-being cleared, so the complete 3D game needs that pack. See [asset setup](docs/ASSETS.md).
-There is no hosted playable demo yet.
-
 For development setup, read [Running on your own computer](docs/LOCAL_DEVELOPMENT.md).
 
 
@@ -67,6 +67,9 @@ For development setup, read [Running on your own computer](docs/LOCAL_DEVELOPMEN
 | `.github/` | Contribution policies, issue/PR templates and CI |
 
 ## Development status
+
+Read the [release status and contributor audit](docs/STATUS.md) for verified
+coverage, corrected publication issues and the remaining blockers.
 
 Three factions, their tutorials, operations, local accounts and verified standings
 are implemented. Automated tests cover replay integrity and recovery. Wider
