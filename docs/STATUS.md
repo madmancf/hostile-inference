@@ -27,6 +27,25 @@ publication checks require all their hashes, provenance and license notices.
 CI additionally opens each faction's full-quality tutorial. No generation,
 new payment, graphics reduction or hosted deployment is part of this correction.
 
+## Asset-release verification
+
+The candidate at `aac2f9f` passed all 23 source suites and syntax checks. A new
+isolated clone, with no private workspace files copied into it, ran `npm ci`,
+`npm run check:assets`, `npm run check:public`, `npm run build`,
+`npm run test:release` and `HI_BROWSER_GAME=1 npm run test:browser` on Node 26.
+
+All 39 asset fingerprints matched. All 10 portable-package checks passed,
+including exact license/provenance retention, six replay matchups and persistence
+after restart. One background Chromium process covered account flows in both
+source-only fallback and full-game modes for all three factions. Each full-game
+run reached its tutorial, with 4096-pixel shadows, 2048-pixel reflections,
+32 AO samples and the existing bloom setting. No page errors or failed local
+resources were recorded. Account/entry layouts fit 390/1366 CSS pixels at 100% zoom.
+
+This verifies a complete installation and startup, not a new full-operation
+playthrough, human visual approval or 60 FPS certification. The active local
+release and player database were not changed by the isolated packaging test.
+
 ## Earlier contributor audit — historical evidence
 
 The earlier repository report accurately recorded passing technical checks, but
