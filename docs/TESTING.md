@@ -29,7 +29,7 @@ following [Chromium's guidance](https://chromium.googlesource.com/chromium/src/+
 It does not disable the host-wide restriction or modify a contributor's machine.
 The GPU-less runner uses `HI_BROWSER_SOFTWARE_GPU=1` to select Chromium's
 [SwiftShader driver](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/docs/gpu/swiftshader.md)
-and a longer startup timeout. The game retains the same textures, geometry,
+and bounded 180-second startup / 60-second interaction timeouts. The game retains the same textures, geometry,
 shadow/reflection sizes and effects. Software rendering is not FPS evidence.
 
 `npm run dev:server` starts the loopback development server without requiring

@@ -18,7 +18,7 @@ const game=process.env.HI_BROWSER_GAME==='1',tmp=await fs.mkdtemp(path.join(os.t
 const forceSource=await fs.access('game/entry/assets/misanthropic.webp').then(()=>true,()=>false);
 const probe=net.createServer();await new Promise(r=>probe.listen(0,'127.0.0.1',r));
 const port=probe.address().port;await new Promise(r=>probe.close(r));
-const base='http://127.0.0.1:'+port,report={status:'running',background:true,game,tests:[],errors:[],resourceErrors:[],fpsCertified:false};
+const base='http://127.0.0.1:'+port,report={status:'running',background:true,game,softwareGPU,tests:[],errors:[],resourceErrors:[],fpsCertified:false};
 let server,browser,logs='',interrupted=false;
 const stopServer=async()=>{
   if(server&&server.exitCode===null&&server.signalCode===null){
@@ -48,7 +48,7 @@ try{
     if(interrupted)throw Error('Interrupted');
     const context=await browser.newContext({viewport:{width:1366,height:900},deviceScaleFactor:2});
     try{
-      const page=await context.newPage();page.setDefaultTimeout(15000);
+      const page=await context.newPage();page.setDefaultTimeout(softwareGPU?60000:15000);
       page.on('pageerror',error=>report.errors.push({faction,message:error.message}));
       page.on('console',message=>{if(message.type()==='error'&&message.text().includes('THREE.'))report.errors.push({faction,message:message.text().slice(0,1000)});});
       page.on('response',response=>{
