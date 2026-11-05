@@ -2,5 +2,12 @@
 *.glb binary
 *.png binary
 *.jpg binary
+*.jpeg binary
 *.webp binary
+*.wasm binary
 game/vendor/** linguist-vendored
+
+# Generated dependency metadata is reproducible; source remains the review focus.
+package-lock.json linguist-generated
+# Markdown trailing spaces can be intentional hard line breaks.
+*.md whitespace=-blank-at-eol
