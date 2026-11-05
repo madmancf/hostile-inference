@@ -69,7 +69,7 @@ Choose additional checks from the [test map](tests/README.md) for your change.
 | [release](release/README.md) | Immutable packages, runtime settings and safe updates |
 | [scripts](scripts/README.md) | Development, validation and private operator commands |
 | [docs](docs/README.md) | Setup, architecture, asset scope and release status |
-| [.github](.github/README.md) | Pull-request evidence, review expectations and CI |
+| [.github](.github/CONTRIBUTING.md) | Pull-request evidence, review expectations and CI |
 
 ## Development status
 
