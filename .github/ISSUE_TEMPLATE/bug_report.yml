@@ -1,0 +1,30 @@
+name: Bug report
+description: Report a reproducible local gameplay, UI or server bug.
+body:
+  - type: markdown
+    attributes:
+      value: "For vulnerabilities use Security → Report a vulnerability. Do not upload credentials, databases or private player logs."
+  - type: input
+    id: environment
+    attributes:
+      label: Commit and environment
+      description: Commit, OS, Node/browser version, faction, viewport and zoom if relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence
+      description: Short error message or relevant screenshot. State whether the original art pack is available.

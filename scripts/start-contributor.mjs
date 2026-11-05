@@ -1,0 +1,10 @@
+import {spawn,spawnSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+process.chdir(fileURLToPath(new URL('../', import.meta.url)));
+const check=spawnSync(process.execPath,['scripts/check-assets.mjs'],{stdio:'inherit'});
+if(check.error)throw check.error;
+if(check.status!==0)process.exit(check.status||1);
+const server=spawn(process.execPath,['design-preview/server.mjs'],{stdio:'inherit'});
+for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>server.kill(signal));
+server.once('error',error=>{console.error(error.message);process.exitCode=1;});
+server.once('exit',(code,signal)=>{process.exitCode=code??(signal?130:1);});

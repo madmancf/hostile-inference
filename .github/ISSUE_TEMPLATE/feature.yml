@@ -1,0 +1,19 @@
+name: Feature or design proposal
+description: Propose a focused improvement before implementation.
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Player or contributor problem
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior and acceptance criteria
+    validations:
+      required: true
+  - type: textarea
+    id: implications
+    attributes:
+      label: Compatibility, graphics, balance or asset implications

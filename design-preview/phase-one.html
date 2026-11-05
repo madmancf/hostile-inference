@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#121413">
+  <title>Hostile Inference — Art Direction</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="wordmark" href="#" aria-label="Hostile Inference, back to battlefield"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M5 8h8v24H5zm22 0h8v24h-8zM16 17h8v6h-8z" fill="currentColor"/><path d="m14 4 12 32" stroke="currentColor" stroke-width="2"/></svg><span>HOSTILE<br>INFERENCE</span></a>
+    <div class="edition"><span class="status-dot"></span> ART DIRECTION 001 <span class="edition-separator">/</span> OCT 2026</div>
+    <button class="review-button" id="review-open">Choose a direction <span>↗</span></button>
+  </header>
+  <main>
+    <section class="intro" aria-label="Design exploration">
+      <div><p class="eyebrow">THREE LABS. ONE PLANET. NO ALIGNMENT.</p><h1>The compute wars.</h1></div>
+      <p>A real-time strategy about artificial intelligence<br class="desktop-break"> and very human ambition. First, the look.</p>
+    </section>
+    <div class="review-toolbar">
+      <nav class="view-tabs" aria-label="Review content"><button data-view="battlefield" aria-pressed="true">Battlefield <span>01</span></button><button data-view="assets" aria-pressed="false">War machines <span>02</span></button><button data-view="maps" aria-pressed="false">Map room <span>03</span></button></nav>
+      <div class="toolbar-right"><span class="preview-label" id="preview-label">CONCEPT ART + INTERACTIVE HUD</span><select id="direction-select" aria-label="Art direction"><option value="A">A / Blacksite</option><option value="B">B / Signal ’97</option><option value="C">C / Corporate Apocalypse</option></select></div>
+    </div>
+    <section class="stage theme-a faction-misanthropic" id="stage" aria-label="Blacksite battlefield preview">
+      <div id="battlefield-view" class="content-view">
+        <img id="battlefield-art" class="battlefield-art" src="assets/A-battlefield.png" alt="Blacksite concept: three rival AI laboratories battle across an industrial basalt map">
+        <div class="hud-top"><div class="hud-brand"><span class="faction-mark" aria-hidden="true">⬡</span><span id="hud-faction">MISANTHROPIC</span><small>COMMAND NETWORK</small></div><div class="resources"><span><i>◈</i><b>2,450</b><small>CREDITS</small></span><span><i>ϟ</i><b>80 / 120</b><small>POWER</small></span><span><i>▥</i><b>18 / 60</b><small>SUPPLY</small></span></div><span class="hud-clock">08:42 <small>SCENE SAMPLE</small></span></div>
+        <div class="sector-label"><span class="tiny-cross">+</span><div><small>CONTESTED SECTOR / 03</small><strong>FORKED GRID</strong></div></div>
+        <aside class="command-panel" aria-label="Faction command panel">
+          <div class="panel-heading"><span>TACTICAL NETWORK</span><span class="tiny-cross">+</span></div>
+          <div class="minimap" id="minimap" aria-label="Concept minimap"></div>
+          <div class="network-label"><span class="status-dot"></span><span>UPLINK STABLE</span><span>03</span></div>
+          <div class="panel-heading production-heading"><span>DEPLOYMENT</span><small>UI PREVIEW</small></div>
+          <div class="production-tabs" aria-label="Asset category"><button data-category="units" aria-pressed="true">Roster</button><button data-category="structures" aria-pressed="false">Structures</button></div>
+          <div class="unit-grid" id="unit-grid"></div>
+          <div class="unit-readout"><small id="unit-role">HEAVY / AREA DENIAL</small><strong id="unit-name">CENSURE</strong><p id="unit-description">Slow armour. Wide control. Makes crossing the line expensive.</p><div class="unit-stats" id="unit-stats"></div></div>
+        </aside>
+        <div class="hud-bottom"><div class="selection-card"><span class="selection-icon" aria-hidden="true">⬡</span><div><small>FACTION DOCTRINE</small><strong id="hud-doctrine">Safety through superiority.</strong></div></div><div class="order-buttons" aria-label="Command visual samples"><span><b>M</b> MOVE</span><span><b>A</b> ATTACK</span><span><b>H</b> HOLD</span></div><span class="match-caption">ILLUSTRATED SCENE <span>•</span> HUD CONTROLS ACTIVE</span></div>
+      </div>
+      <div id="assets-view" class="content-view asset-view" hidden><div class="asset-heading"><span id="asset-direction">A / BLACKSITE</span><span>HEADQUARTERS · HARVESTER · LIGHT · HEAVY</span></div><img id="asset-art" src="assets/A-assets.png" alt="Twelve Blacksite concept assets, four roles for each of three factions"><div class="asset-column-labels"><span>MISANTHROPIC<small>Nested armour. Protective geometry.</small></span><span>CLOSED AI<small>Sealed forms. Precision engineering.</small></span><span>BROKE LABS<small>Exposed engines. Improvised violence.</small></span></div></div>
+      <div id="maps-view" class="content-view map-view" hidden><div class="map-plans"><div class="map-header"><div><span class="eyebrow">TACTICAL LAYOUT STUDIES</span><h2 id="map-title">Forked Grid</h2></div><select id="map-select" aria-label="Map layout"><option value="forked">Forked Grid</option><option value="thermal">Thermal Divide</option><option value="cache">Cache Valley</option></select></div><div id="map-diagram"></div><div class="map-legend"><span><i class="legend-base"></i> STARTING BASE</span><span><i class="legend-resource"></i> DATA SEAM</span><span><i class="legend-objective"></i> COMPUTE RELAY</span><span><i class="legend-route"></i> ATTACK ROUTE</span></div></div><aside class="map-notes"><span class="eyebrow">MAP INTENT</span><p id="map-summary"></p><dl id="map-facts"></dl><p class="map-disclaimer">Layout proposals. Fair travel times, pathfinding, and resource access still require simulation.</p></aside></div>
+    </section>
+    <div class="stage-caption"><span id="direction-caption">A / BLACKSITE</span><span id="direction-material">WEATHERED MACHINES · BASALT · AMBER GLASS</span><button id="expand-preview" aria-label="Expand the review stage">Expand preview ↗</button></div>
+    <section class="directions" aria-label="Choose an art direction">
+      <button class="direction active" data-direction="A" aria-pressed="true"><div class="direction-top"><span class="direction-number">A</span><span class="recommended">MY PICK</span><span class="direction-arrow">↗</span></div><h2>Blacksite</h2><p>Heavy industry. Quiet menace.<br>A war you can feel in the machinery.</p><div class="swatches"><i style="--swatch:#282d2b"></i><i style="--swatch:#dfd5b9"></i><i style="--swatch:#d79556"></i><i style="--swatch:#72bfc8"></i><span>INDUSTRIAL ISOMETRIC</span></div></button>
+      <button class="direction" data-direction="B" aria-pressed="false"><div class="direction-top"><span class="direction-number">B</span><span class="direction-arrow">↗</span></div><h2>Signal ’97</h2><p>Beautiful pixels. Ruthless clarity.<br>The golden age, with a new enemy.</p><div class="swatches"><i style="--swatch:#18383e"></i><i style="--swatch:#73a45d"></i><i style="--swatch:#c3814b"></i><i style="--swatch:#486ccf"></i><span>CLASSIC PIXEL RTS</span></div></button>
+      <button class="direction" data-direction="C" aria-pressed="false"><div class="direction-top"><span class="direction-number">C</span><span class="direction-arrow">↗</span></div><h2>Corporate Apocalypse</h2><p>Perfect little machines. Imperfect motives.<br>War as an architectural model.</p><div class="swatches"><i style="--swatch:#dad6c8"></i><i style="--swatch:#b8664c"></i><i style="--swatch:#a6c8b9"></i><i style="--swatch:#9388a9"></i><span>TACTILE MINIATURES</span></div></button>
+    </section>
+    <section class="factions-section" aria-label="Faction identities"><div class="section-intro"><span class="eyebrow">KNOW YOUR COMPETITION</span><h2>Different beliefs.<br>Different weapons.</h2><p>The rivalry is the joke.<br>The strategy gets taken seriously.</p></div><div class="faction-list" id="faction-list"></div></section>
+    <footer><span>HOSTILE INFERENCE / DESIGN EXPLORATION</span><span>Original fictional factions. Concept assets. Gameplay follows the visual decision.</span></footer>
+  </main>
+  <dialog id="review-dialog"><form id="review-form"><button type="button" class="dialog-close" id="review-close" aria-label="Close review">×</button><span class="eyebrow">MAKE THE CALL</span><h2>Which war<br>are we building?</h2><p id="review-choice">Your preference: A / Blacksite</p><label for="feedback">What should stay, change, or be mixed?</label><textarea id="feedback" maxlength="5000" rows="4" placeholder="For example: A’s machines with B’s interface. Darker terrain. More bizarre units."></textarea><button class="submit-feedback" type="submit">Save my preference <span>↗</span></button><p class="feedback-status" id="feedback-status" role="status">Saves locally for the next design pass.</p></form></dialog>
+</body>
+</html>

@@ -1,0 +1,57 @@
+{
+  "name": "hostile-inference",
+  "private": true,
+  "version": "0.20.0",
+  "description": "Hostile Inference — animated 3D server-continent RTS",
+  "scripts": {
+    "start": "node scripts/start-contributor.mjs",
+    "dev": "node scripts/start-contributor.mjs",
+    "dev:server": "node design-preview/server.mjs",
+    "preview:managed": "node scripts/start-preview.mjs",
+    "preview:stop": "node scripts/start-preview.mjs --stop",
+    "check": "node scripts/check-source.mjs",
+    "check:public": "node checks/public-source.mjs",
+    "check:assets": "node scripts/check-assets.mjs",
+    "test": "node scripts/test-source.mjs",
+    "test:browser": "node checks/contributor-browser.mjs",
+    "test:enemy-balance": "node checks/enemy-balance.mjs",
+    "test:ranked": "node checks/ranked.mjs && node checks/ranked-actions.mjs && node checks/ranked-recovery.mjs",
+    "test:accounts": "node checks/accounts.mjs",
+    "test:leaderboards": "node checks/leaderboards.mjs",
+    "start:release": "node scripts/start-release.mjs",
+    "test:release": "node checks/release.mjs",
+    "test:model-cache": "node checks/model-cache.mjs",
+    "ops": "node scripts/operate.mjs",
+    "test:verification-jobs": "node checks/verification-jobs.mjs",
+    "test:operations": "node checks/operations.mjs",
+    "test:account-abuse": "node checks/account-abuse.mjs",
+    "test:email": "node checks/email-delivery.mjs",
+    "test:history": "node --expose-gc checks/history-growth.mjs && node checks/history-integrity.mjs",
+    "test:capacity-soak": "node --expose-gc checks/capacity-soak.mjs",
+    "build": "npm run check:assets && node scripts/build-release.mjs"
+  },
+  "type": "module",
+  "dependencies": {
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "meshoptimizer": "^1.1.0",
+    "playwright": "1.64.1",
+    "sharp": "^0.35.5"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": "^24.0.0 || ^26.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/madmancf/hostile-inference.git"
+  },
+  "bugs": {
+    "url": "https://github.com/madmancf/hostile-inference/issues"
+  },
+  "homepage": "https://github.com/madmancf/hostile-inference#readme"
+}

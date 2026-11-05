@@ -1,0 +1,24 @@
+{
+  "hq": {
+    "misanthropic": "misanthropic-hq-web-v1.glb",
+    "closed": "closed-hq-web-v1.glb",
+    "broke": "broke-hq-web-v1.glb"
+  },
+  "researcher": "researcher-walk-web-v1.glb",
+  "researcherIdle": "researcher-idle-clip-v1.glb",
+  "agent": "agent-walk-web-v1.glb",
+  "agentIdle": "agent-idle-clip-v1.glb",
+  "original": {
+    "hq": {
+      "misanthropic": "misanthropic-hq-v1.glb",
+      "closed": "closed-hq-v1.glb",
+      "broke": "broke-hq-v1.glb"
+    },
+    "researcher": "researcher-walk-v1.glb",
+    "researcherIdle": "researcher-idle-v1.glb",
+    "agent": "agent-walk-v1.glb",
+    "agentIdle": "agent-idle-v1.glb"
+  },
+  "researcherField": "researcher-field-v1.glb",
+  "agentField": "agent-field-v1.glb"
+}
