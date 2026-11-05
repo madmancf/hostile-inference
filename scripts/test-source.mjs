@@ -4,7 +4,7 @@ import {fileURLToPath} from 'node:url';
 process.chdir(fileURLToPath(new URL('../', import.meta.url)));
 await fs.mkdir('output/playwright',{recursive:true});
 // Deliberately separate from full-art tests: these all run from a public clone.
-const suites=['simulation','demo','tutorial','draw-batches','faction-assets',
+const suites=['doctor','simulation','demo','tutorial','draw-batches','faction-assets',
   'local-game','faction-gameplay','faction-tech','enemy-ai','ranked','ranked-actions',
   'ranked-recovery','accounts','leaderboards','model-cache','verification-jobs',
   'operations','account-abuse','email-delivery','history-growth','history-integrity'];
