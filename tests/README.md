@@ -17,7 +17,7 @@ source gate; the table identifies extra coverage or a useful focused loop.
 | Package contents or HTTP serving | `npm run build`, `npm run test:release` | Asset hashes, public allowlist, origin policy and portable replays |
 | Contributor setup | `node tests/doctor.mjs`, `npm run test:browser` | Useful art-free startup; no dependence on private maintainer files |
 
-## Running without private art
+## Background browser coverage
 
 The source gate needs no art, account credentials or paid service. Browser setup
 is documented in [the test guide](../docs/TESTING.md). The default browser run
@@ -25,8 +25,9 @@ uses one owned headless Chromium process and temporary accounts for all three
 factions. It checks actual navigation and failed local resources at native zoom.
 
 `HI_BROWSER_GAME=1 npm run test:browser` also opens the full-quality tutorial
-for each faction when the art is present. It is a startup check, not a complete
-mission or FPS certificate. Packaging tests also require authorized art.
+for each faction using the included art; CI runs this extended mode. It is a
+startup check, not a complete mission or FPS certificate. Packaging tests use
+the same published files.
 
 ## Adding a regression
 

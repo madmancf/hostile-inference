@@ -15,7 +15,7 @@ tutorials, verified operations, local accounts and asynchronous leaderboards.
 
 ## Before a hosted player launch
 
-- Clear external art redistribution rights or produce a fully licensed pack.
+- Keep asset provenance and license records current when introducing new art.
 - Broaden current balance/scoring-abuse tests without changing the approved
   contribution formula or rewriting historical verified results.
 - Automate verified backup rotation, readiness, disk/queue monitoring and

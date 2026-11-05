@@ -41,9 +41,10 @@ those differences when changing silhouettes, movement or tactical feedback.
 
 ## Run and review
 
-`npm run dev:server` serves this directory locally. Without the external art,
-entry and gameplay routes show the contributor workspace; account/standings
-development still works. See [asset setup](../docs/ASSETS.md) for the full game.
+`npm start` verifies the included art and serves the full game locally.
+`npm run dev:server` skips the fingerprint preflight; incomplete checkouts show
+the contributor workspace while account/standings development remains available.
+See [asset scope and license](../docs/ASSETS.md).
 
 Use [the test map](../tests/README.md) for the affected layer. Full-art browser
 startup is `HI_BROWSER_GAME=1 npm run test:browser`, in background Chromium.

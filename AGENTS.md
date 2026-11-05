@@ -10,8 +10,9 @@ These instructions apply to Codex, Claude, Gemini and other coding assistants.
   human explicitly requests that action.
 - The game is a solo RTS against faction AI with asynchronous faction standings;
   do not describe it as live multiplayer. Sessions are bounded to 15 minutes.
-- Public art rights are unresolved. See `docs/ASSETS.md`. The renderer and
-  procedural faction geometry are source code; excluded external art is not MIT.
+- The 39 runtime art files are public under `docs/ASSET_LICENSE.md`; see
+  `docs/ASSETS.md` for provenance. Source/procedural geometry remain MIT. New art
+  needs its own provenance and distribution review; never add private masters.
 - Do not reduce shadows, textures, geometry, animation or other quality settings
   to meet performance targets. 60 FPS certification is still deferred.
 
@@ -28,7 +29,7 @@ These instructions apply to Codex, Claude, Gemini and other coding assistants.
 
 Run `npm run check`, `npm test`, and `npm run check:public` for a PR. Add targeted
 coverage for changed behavior. UI changes also need `npm run test:browser`;
-full-game browser checks require the rights-cleared art pack. Use temporary
+full-game browser checks use the included runtime art pack. Use temporary
 directories and guaranteed cleanup. Never target another running preview.
 
 Keep browser testing in the background. Use one owned bundled Chromium or

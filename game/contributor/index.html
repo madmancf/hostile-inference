@@ -11,9 +11,9 @@
 <body>
   <header><a href="/">HOSTILE INFERENCE</a><span>LOCAL CONTRIBUTOR WORKSPACE</span></header>
   <main id="source-only">
-    <p class="eyebrow">SOURCE AVAILABLE · ART PACK NOT INCLUDED</p>
+    <p class="eyebrow">INCOMPLETE CHECKOUT OR SOURCE-ONLY MODE</p>
     <h1>Build the game<br>with us.</h1>
-    <p class="intro">This checkout runs accounts, standings and simulation tests. The complete 3D game needs external artwork that is not distributed in the public repository.</p>
+    <p class="intro">This checkout runs accounts, standings and simulation tests. The complete 3D game uses the runtime artwork included in the public repository.</p>
     <section aria-labelledby="available-title">
       <h2 id="available-title">Available on this computer</h2>
       <p>Create test accounts, choose a faction and work on verified-result storage and standings. Accounts and scores stay in this checkout; there is no public season or hosted game here.</p>
@@ -22,8 +22,8 @@
     </section>
     <section aria-labelledby="art-title">
       <h2 id="art-title">Playing the full game</h2>
-      <p>Tutorial, practice and faction-operation links return here while the art pack is absent. Redistribution rights remain unresolved, and no public asset download is available.</p>
-      <p>If you already have an authorized pack, follow the asset guide, run <code>npm run check:assets</code>, then restart the server. The complete installation uses the original graphics.</p>
+      <p>Tutorial, practice and faction-operation links return here while the art pack is absent. The runtime art is included in a normal Git clone; check for missing files or an explicitly enabled source-only mode.</p>
+      <p>Follow the asset guide to restore missing files, run <code>npm run check:assets</code>, then restart the server without <code>HI_PREVIEW_SOURCE_ONLY=1</code>. The complete installation uses the original graphics.</p>
       <nav aria-label="Project documentation"><a href="https://github.com/madmancf/hostile-inference/blob/main/docs/ASSETS.md">Asset guide ↗</a><a href="https://github.com/madmancf/hostile-inference/blob/main/.github/CONTRIBUTING.md">Contributing ↗</a></nav>
     </section>
   </main>

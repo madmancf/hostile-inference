@@ -18,9 +18,9 @@ No particular assistant, paid API, editor, or agent service is required.
 Use short commit subjects describing the change, such as `Fix cooling queue`.
 Keep test detail and agent commentary in the PR description, not commit titles.
 
-The public repository contains code, procedural geometry and tests. External
-generated art is excluded pending redistribution clearance. `npm test` works
-without it. See [asset setup](../docs/ASSETS.md) before attempting the 3D demo.
+The public repository contains code, procedural geometry, tests and the complete
+runtime art pack. Code is MIT; art uses a separate
+[license and provenance record](../docs/ASSETS.md). `npm test` also works without art.
 Do not replace missing art with lower-quality assets and claim visual parity.
 
 ## LLM-assisted work
@@ -37,15 +37,15 @@ a command ran. Never claim visual review, FPS, or human playtesting from a unit 
 | --- | --- |
 | Source / Node 24 | Syntax, staged public-tree checks and source regressions |
 | Source / Node 26 | The same source checks on the other supported runtime |
-| Background account flow | Art-free entry, navigation, faction sign-up, sessions and standings in headless Chromium |
+| Background account flow | Missing-art fallback plus full-graphics tutorial startup, faction sign-up, sessions and standings in headless Chromium |
 
-The workflow has no private art, player data or mail credentials and does not
+The workflow uses the published runtime art, with no player data or mail credentials, and does not
 deploy. A green run does not certify appearance, FPS, human enjoyment, hosted
 capacity or asset rights. External-contributor workflows may wait for maintainer
 approval before running.
 
 Give a concrete trigger and expected result that a reviewer can reproduce from
-a public clone, or identify the authorized-art requirement. Use the
+a public clone, or identify any additional asset requirements. Use the
 [test map](../tests/README.md) to select checks. For UI changes, state viewport,
 zoom and browser mode, and include safe before/after evidence. Keep private
 player names, recovery links and provider receipts out of captures.
@@ -70,6 +70,7 @@ or meaningless edits merely to change those labels.
   provider receipts, generated art without rights evidence, or `node_modules`.
 
 By submitting a contribution, you confirm that you have the right to submit it
-under the repository's MIT license. Retain existing third-party notices.
+under MIT for source/docs, or the stated license for art. Retain existing
+third-party notices and document new asset provenance.
 Security issues belong in [private vulnerability reporting](SECURITY.md).
 Maintainer review is required; passing CI does not automatically merge a PR.

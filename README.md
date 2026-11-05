@@ -12,10 +12,10 @@ A browser RTS about runaway models, corporate rivalry and keeping the servers al
 
 </div>
 
-**Development source release — no hosted playable demo.** You can work on the
-simulation, accounts and standings now. The complete 3D game requires an external
-art pack that is not publicly available; redistribution rights remain unresolved.
-See [what is included](docs/ASSETS.md) before setting up the game.
+**Play locally or contribute.** This repository includes the game and all 39
+full-quality runtime art files. No paid AI account or separate asset download is
+required. There is no hosted player service yet. Code is MIT; the art has a
+[separate redistribution license](docs/ASSET_LICENSE.md).
 
 ## Choose your laboratory
 
@@ -35,15 +35,28 @@ containment units and infiltrators each have a role.
 The factions are fictional satire. This is an independent project, unaffiliated
 with real AI laboratories. Competition is asynchronous; live PvP is not implemented.
 
-## Start contributing
+## Play on your computer
 
-Human and LLM-assisted pull requests are welcome. No paid AI service is required.
 Use **Node 24 or 26** on Linux or macOS; use WSL2 on Windows.
 
 ```sh
 git clone https://github.com/madmancf/hostile-inference.git
 cd hostile-inference
 npm ci
+npm start
+```
+
+Open the local address printed in your terminal. Choose a laboratory and start
+**First Light** to learn its buildings, economy and counters. Training and practice
+need no account. Local sign-ups retain verified results and faction contributions.
+See [local setup and troubleshooting](docs/LOCAL_DEVELOPMENT.md).
+
+## Start contributing
+
+Human and LLM-assisted pull requests are welcome. No paid AI service is required.
+After the setup above, run:
+
+```sh
 npm run doctor
 npm run verify
 ```
@@ -78,7 +91,7 @@ coverage, corrected publication issues and the remaining blockers.
 
 Three factions, their tutorials, operations, local accounts and verified standings
 are implemented. Automated tests cover replay integrity and recovery. Wider
-balance testing, independent newcomer playtests, art clearance and hosted setup
+balance testing, independent newcomer playtests and hosted setup
 remain on the [roadmap](docs/ROADMAP.md).
 
 Full graphics are retained. **60 FPS remains a target awaiting certification.**
@@ -89,4 +102,4 @@ not a hosted capacity guarantee. No automatic deployment is configured.
 
 Original source and documentation are [MIT licensed](LICENSE).
 [Third-party notices](docs/THIRD_PARTY_NOTICES.md) retain dependency licenses;
-the excluded art pack is not covered by MIT.
+the included [runtime art](docs/ASSETS.md) uses its own license.

@@ -12,8 +12,8 @@ process.chdir(fileURLToPath(new URL('../',import.meta.url)));
 const executablePath=process.env.HI_BROWSER_EXECUTABLE;
 if(executablePath&&/Google Chrome\.app(?:\/|$)/.test(executablePath))throw Error('Use bundled Chromium or Chrome for Testing, never normal Chrome');
 const game=process.env.HI_BROWSER_GAME==='1',tmp=await fs.mkdtemp(path.join(os.tmpdir(),'hi-contributor-'));
-// Clean clones must exercise automatic missing-art detection. Only maintainers
-// with private art need an explicit switch to see the contributor workspace.
+// Complete public clones include art. Force the source-only fallback separately
+// so its account/navigation behavior remains covered alongside the real game.
 const forceSource=await fs.access('game/entry/assets/misanthropic.webp').then(()=>true,()=>false);
 const probe=net.createServer();await new Promise(r=>probe.listen(0,'127.0.0.1',r));
 const port=probe.address().port;await new Promise(r=>probe.close(r));
@@ -28,7 +28,7 @@ const stopServer=async()=>{
 const stop=async()=>{await browser?.close().catch(()=>{});await stopServer();};
 for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{interrupted=true;void stop();});
 try{
-  browser=await chromium.launch({headless:true,...(executablePath?{executablePath}:{})});
+  browser=await chromium.launch({headless:true,chromiumSandbox:true,...(executablePath?{executablePath}:{})});
   // Exercise the art-free contributor experience even on full installations.
   // Both modes reuse this one browser and separate disposable server data.
   for(const fullGame of game?[false,true]:[false]){
@@ -65,7 +65,7 @@ try{
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Entry fits at '+width);
       }
       if(!fullGame){
-        assert.ok((await page.locator('#source-only').textContent()).includes('no public asset download'));
+        assert.ok((await page.locator('#source-only').textContent()).includes('runtime art is included in a normal Git clone'));
         await page.locator('#source-account').click();
       }else await page.locator('#join').click();
       await page.locator('#entry').waitFor({state:'visible'});

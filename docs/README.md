@@ -6,8 +6,8 @@ refer to the reader's own computer; this project has no hosted playable demo.
 | Goal | Guide |
 | --- | --- |
 | Understand what is actually released and verified | [Release status and audit](STATUS.md) |
-| Run the contributor workspace | [Local development](LOCAL_DEVELOPMENT.md) |
-| Understand the missing art and full-game requirements | [Assets and rights](ASSETS.md) |
+| Play the full game locally or run the contributor workspace | [Local development](LOCAL_DEVELOPMENT.md) |
+| Understand the included art, provenance and reuse license | [Assets and rights](ASSETS.md) |
 | Follow simulation, server and result ownership | [Architecture](ARCHITECTURE.md) |
 | Run checks and understand their limits | [Testing](TESTING.md) |
 | Find focused contribution opportunities | [Roadmap](ROADMAP.md) |
