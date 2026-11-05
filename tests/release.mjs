@@ -30,10 +30,14 @@ try{
   const names=Object.keys(manifest.assets);assert.equal(names.filter(n=>n.endsWith('.glb')).length,9);assert.ok(!names.some(n=>/checks\/|render-profiler|original\//.test(n)));assert.equal(await fs.stat(path.join(release,'node_modules')).catch(()=>null),null);
  });
  await test('Portable package retains exact art license, provenance and fingerprints',async()=>{
-  for(const name of ['ASSET_LICENSE.md','ASSETS.md','runtime-assets.json','LOCAL_DEVELOPMENT.md']){
+  for(const name of ['ASSET_LICENSE.md','ASSETS.md','runtime-assets.json','LOCAL_DEVELOPMENT.md','TESTING.md']){
    const bytes=await fs.readFile(path.join(release,'docs',name));
    assert.deepEqual(bytes,await fs.readFile('docs/'+name));
    assert.equal(createHash('sha256').update(bytes).digest('hex'),manifest.privateSHA256['docs/'+name]);
+   if(name.endsWith('.md'))for(const match of bytes.toString().matchAll(/\[[^\]\n]*\]\(([^)\s]+)\)/g)){
+    const target=match[1].split('#')[0];if(!target||/^[a-z]+:/i.test(target))continue;
+    assert.ok(await fs.stat(path.resolve(release,'docs',target)).catch(()=>null),'Missing packaged documentation link: '+name+' -> '+target);
+   }
   }
   assert.match(await fs.readFile(path.join(release,'THIRD_PARTY_NOTICES.txt'),'utf8'),/docs\/ASSET_LICENSE\.md/);
  });
