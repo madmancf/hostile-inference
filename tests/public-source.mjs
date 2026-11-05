@@ -6,6 +6,10 @@ import {fileURLToPath} from 'node:url';
 process.chdir(fileURLToPath(new URL('../',import.meta.url)));
 const files=execFileSync('git',['ls-files','-z'],{encoding:'utf8'}).split('\0').filter(Boolean);
 assert.ok(files.length,'A Git checkout with tracked files is required');
+// GitHub gives .github/README precedence over the root README. Keep contribution
+// policies in CONTRIBUTING.md so they cannot silently replace the game overview.
+assert.deepEqual(files.filter(file=>/^\.github\/readme(?:\.[^/]+)?$/i.test(file)),[],
+  'A .github README would replace the root project overview; use .github/CONTRIBUTING.md');
 const known=new Set(files),failures=[];
 const forbidden=/(^|\/)(node_modules|dist|output|provenance|\.runtime|\.gstack|\.playwright[^/]*)(\/|$)|(^|\/)\.env(?:\.|$)|\.(?:sqlite(?:-wal|-shm)?|db|pem|key|log|png|jpe?g|webp|glb|zip|tgz)$/i;
 const secrets=[/\b(?:gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,})\b/,/\bAKIA[A-Z0-9]{16}\b/,/-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/,/\bsk-[A-Za-z0-9_-]{28,}\b/,/https?:\/\/[^\s"']+[?&](?:X-Amz-Signature|token|api_key)=/i];
