@@ -29,6 +29,14 @@ try{
   for(const [name,entry]of Object.entries(manifest.assets)){const b=await fs.readFile(path.join(release,'public',name));assert.equal(createHash('sha256').update(b).digest('hex'),entry.sha256,name);assert.equal(b.length,entry.bytes);if(/\.(glb|png)$/.test(name))assert.equal(entry.sha256,manifest.sourceSHA256['game/'+name],name);}
   const names=Object.keys(manifest.assets);assert.equal(names.filter(n=>n.endsWith('.glb')).length,9);assert.ok(!names.some(n=>/checks\/|render-profiler|original\//.test(n)));assert.equal(await fs.stat(path.join(release,'node_modules')).catch(()=>null),null);
  });
+ await test('Portable package retains exact art license, provenance and fingerprints',async()=>{
+  for(const name of ['ASSET_LICENSE.md','ASSETS.md','runtime-assets.json','LOCAL_DEVELOPMENT.md']){
+   const bytes=await fs.readFile(path.join(release,'docs',name));
+   assert.deepEqual(bytes,await fs.readFile('docs/'+name));
+   assert.equal(createHash('sha256').update(bytes).digest('hex'),manifest.privateSHA256['docs/'+name]);
+  }
+  assert.match(await fs.readFile(path.join(release,'THIRD_PARTY_NOTICES.txt'),'utf8'),/docs\/ASSET_LICENSE\.md/);
+ });
  await start();
  await test('Independent runtime starts with HTTPS origin, persistent storage and security headers',async()=>{
   const r=await fetch(base+'/healthz');assert.equal(r.status,200);assert.equal((await r.json()).release,manifest.id);assert.match(r.headers.get('strict-transport-security'),/31536000/);assert.match(r.headers.get('content-security-policy'),/frame-ancestors 'none'/);

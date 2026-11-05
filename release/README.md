@@ -7,7 +7,7 @@ imports and explicitly names dynamic art. It does not copy the repository.
 
 ## Build and inspect locally
 
-From the source root, with an authorized complete art pack:
+From a complete public clone:
 
 ```sh
 npm run check:assets
@@ -26,7 +26,7 @@ when testing package generation without changing your normal release pointer.
 | `public/` and `pages/` | Versioned assets and canonical HTML entry routes |
 | `api/`, private rule trees and `server.mjs` | Server execution; never public static files |
 | `RUN.md`, `OPERATIONS.md`, `EMAIL-SETUP.md` | Package-specific setup and recovery instructions |
-| `LICENSE`, `THIRD_PARTY_NOTICES.txt` | Code license and dependency/asset scope |
+| `LICENSE`, `docs/ASSET_LICENSE.md`, `docs/ASSETS.md`, `THIRD_PARTY_NOTICES.txt` | Code/art licenses, asset provenance and provider/dependency credits |
 
 ## Runtime settings
 
@@ -49,6 +49,7 @@ compatible package. Cross-schema rollback requires a pre-migration restore,
 not an older binary pointed at migrated storage. Follow the complete
 [operations guide](../docs/operations-0.20.md), including explicit resume.
 
-A successful local package test is not permission to distribute the external
-art or deploy a service. [Release status](../docs/STATUS.md) lists the remaining
-rights, email, hosting, playtesting and performance gates.
+Packages include the runtime art license and provenance. Retain them when
+redistributing a build. A passing package test does not launch or certify a
+hosted service. [Release status](../docs/STATUS.md) lists remaining email, hosting,
+playtesting and performance work.
