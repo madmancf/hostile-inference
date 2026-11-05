@@ -43,3 +43,6 @@ recoverable. Report tests actually run, failures, and untested areas separately.
 Keep logs and binary evidence outside Git. Do not embed credentials, browser
 state or private chat history in issues, PRs or agent handoffs. Passing technical
 checks does not constitute human gameplay or artistic approval.
+
+Use concise commit subjects that describe the change. Put verification details
+in the PR description; omit agent narration and implementation status from titles.

@@ -15,6 +15,9 @@ No particular assistant, paid API, editor, or agent service is required.
 5. Include the problem, observable change, exact checks run, and known limits.
    For UI changes include before/after evidence without private player data.
 
+Use short commit subjects describing the change, such as `Fix cooling queue`.
+Keep test detail and agent commentary in the PR description, not commit titles.
+
 The public repository contains code, procedural geometry and tests. External
 generated art is excluded pending redistribution clearance. `npm test` works
 without it. See [asset setup](../docs/ASSETS.md) before attempting the 3D demo.

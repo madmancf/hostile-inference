@@ -80,13 +80,13 @@ loopback; these commands do not deploy a public service.
 
 | Directory | What's inside |
 | --- | --- |
-| [`game/`](game/index.html) | Browser interface, simulation, renderer and faction systems |
-| [`api/`](api/ranked-service.mjs) | Accounts, command recording, verification and leaderboards |
-| [`tests/`](tests/contributor-browser.mjs) | Gameplay, persistence, security and background browser checks |
-| [`release/`](release/server.mjs) | Production server and runtime manifest |
-| [`scripts/`](scripts/build-release.mjs) | Development, validation, packaging and operator commands |
-| [`docs/`](docs/ARCHITECTURE.md) | Architecture, setup, assets and operating guides |
-| [`.github/`](.github/CONTRIBUTING.md) | Contribution policies, issue/PR templates and CI |
+| `game/` | Browser interface, simulation, renderer and faction systems |
+| `api/` | Accounts, command recording, verification and leaderboards |
+| `tests/` | Gameplay, persistence, security and background browser checks |
+| `release/` | Production server and runtime manifest |
+| `scripts/` | Development, validation, packaging and operator commands |
+| `docs/` | Architecture, setup, assets and operating guides |
+| `.github/` | Contribution policies, issue/PR templates and CI |
 
 ## Development status
 
