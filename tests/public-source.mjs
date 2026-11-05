@@ -14,6 +14,7 @@ for(const file of files){
   const bytes=execFileSync('git',['show',':'+file],{maxBuffer:8*1024*1024});
   if(bytes.includes(0)||bytes.length>5*1024*1024){failures.push(file+': unexpected binary or oversized file');continue;}
   const text=bytes.toString('utf8');
+  if(file==='README.md'&&/https?:\/\/(?:localhost|127(?:\.\d{1,3}){3}|\[::1\])(?=[:/\s`<>]|$)/i.test(text))failures.push(file+': loopback URLs belong in the local development guide, not the public overview');
   if(/\/(?:Users|home)\/[a-zA-Z][^\s'"/]+\//.test(text))failures.push(file+': personal absolute path');
   if(secrets.some(re=>re.test(text)))failures.push(file+': possible credential (value withheld)');
   if(file.endsWith('.md'))for(const match of text.matchAll(/\[[^\]\n]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g)){

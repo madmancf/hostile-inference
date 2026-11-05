@@ -51,30 +51,8 @@ The external generated art pack is not included while redistribution rights are
 being cleared, so the complete 3D game needs that pack. See [asset setup](docs/ASSETS.md).
 There is no hosted playable demo yet.
 
-<details>
-<summary><strong>Run locally</strong></summary>
+For development setup, read [Running on your own computer](docs/LOCAL_DEVELOPMENT.md).
 
-For account and server work without the art pack:
-
-```sh
-npm run dev:server
-```
-
-Open <http://127.0.0.1:4178/account/index.html> or
-<http://127.0.0.1:4178/leaderboards/index.html>.
-
-With an authorized full-quality art pack:
-
-```sh
-npm run check:assets
-npm start
-```
-
-Open <http://127.0.0.1:4178/> for training, practice and verified operations.
-Local email uses a private outbox. Keep `.runtime/` private. The server binds to
-loopback; these commands do not deploy a public service.
-
-</details>
 
 ## Find your way around
 

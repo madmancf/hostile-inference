@@ -73,6 +73,7 @@
 
 /docs/*
 !/docs/THIRD_PARTY_NOTICES.md
+!/docs/LOCAL_DEVELOPMENT.md
 !/docs/ARCHITECTURE.md
 !/docs/ASSETS.md
 !/docs/ROADMAP.md
