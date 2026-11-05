@@ -31,6 +31,29 @@ material AI assistance and what you personally verified in the PR; do not paste
 private prompts or chat histories. A generated test report is not evidence that
 a command ran. Never claim visual review, FPS, or human playtesting from a unit test.
 
+## CI and review evidence
+
+| Required job | What it checks |
+| --- | --- |
+| Source / Node 24 | Syntax, staged public-tree checks and source regressions |
+| Source / Node 26 | The same source checks on the other supported runtime |
+| Background account flow | Art-free entry, navigation, faction sign-up, sessions and standings in headless Chromium |
+
+The workflow has no private art, player data or mail credentials and does not
+deploy. A green run does not certify appearance, FPS, human enjoyment, hosted
+capacity or asset rights. External-contributor workflows may wait for maintainer
+approval before running.
+
+Give a concrete trigger and expected result that a reviewer can reproduce from
+a public clone, or identify the authorized-art requirement. Use the
+[test map](../tests/README.md) to select checks. For UI changes, state viewport,
+zoom and browser mode, and include safe before/after evidence. Keep private
+player names, recovery links and provider receipts out of captures.
+
+GitHub's folder labels are the latest relevant commit subjects. Use focused
+commits such as `Keep faction selection after login`; never add empty commits
+or meaningless edits merely to change those labels.
+
 ## Compatibility and quality
 
 - Keep simulation deterministic and browser/server replay semantics identical.
