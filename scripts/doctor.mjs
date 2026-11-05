@@ -32,7 +32,7 @@ export async function inspectSetup({root=projectRoot,nodeVersion=process.version
   }
   const expected=Object.keys(manifest.assets).length;
   return {sourceReady:checks.every(c=>c.ok),checks,art:{present,expected,wrongSize,fingerprintsVerified:false},
-    next:present===expected&&!wrongSize?'Run npm run check:assets before full-game startup':'Art is optional for source work. Run npm run dev:server for the contributor workspace; see docs/ASSETS.md',
+    next:present===expected&&!wrongSize?'Run npm run check:assets before full-game startup':'Runtime art is missing or changed; see docs/ASSETS.md. Source-only work can use npm run dev:server',
     scope:'Prerequisites only: does not certify tests, graphics, FPS, rights or deployment readiness'};
 }
 

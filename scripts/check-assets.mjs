@@ -10,7 +10,7 @@ for(const [name,expected] of Object.entries(manifest.assets)){
   else if(bytes.length!==expected.bytes||createHash('sha256').update(bytes).digest('hex')!==expected.sha256)problems.push('Changed '+name);
 }
 if(problems.length){
-  console.error('Full-quality art is not included in the public source repository. See docs/ASSETS.md.');
+  console.error('Runtime art is missing or changed. A complete Git clone includes all assets; see docs/ASSETS.md.');
   console.error(problems.slice(0,5).join('\n')+'\n'+problems.length+' asset files need attention.');
   process.exitCode=1;
 }else console.log('PASS '+Object.keys(manifest.assets).length+' exact full-quality runtime assets');
