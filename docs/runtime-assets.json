@@ -2,159 +2,159 @@
   "schema": 1,
   "scope": "Excluded external art, full-quality runtime fingerprints only; no redistribution grant",
   "assets": {
-    "design-preview/entry/assets/broke.webp": {
+    "game/entry/assets/broke.webp": {
       "bytes": 325104,
       "sha256": "734ad134c9dc53d091625397b3318910239dfaadc0d48be28f77c7c21e1f2a9f"
     },
-    "design-preview/entry/assets/closed.webp": {
+    "game/entry/assets/closed.webp": {
       "bytes": 278242,
       "sha256": "e3afe3dc423fd11d94a0a0040f51c2b8dcda169bbd22c41c9932987f710ef109"
     },
-    "design-preview/entry/assets/misanthropic.webp": {
+    "game/entry/assets/misanthropic.webp": {
       "bytes": 343782,
       "sha256": "7f46273e662689edd125d32d2005b7d0952d6ffb91dffdec4b43e5bfc6a8a2f3"
     },
-    "design-preview/servers/assets/agent-field-v1.glb": {
+    "game/servers/assets/agent-field-v1.glb": {
       "bytes": 2420452,
       "sha256": "cef985c52cab054fb38ea2aee97bbaa308f35224f359d7adb5553346b6a9946e"
     },
-    "design-preview/servers/assets/agent-idle-clip-v1.glb": {
+    "game/servers/assets/agent-idle-clip-v1.glb": {
       "bytes": 136884,
       "sha256": "5b7cd627f59c77db06560c76ada5cfbaa35768cb56bc3f4679cb867b45b5c0bd"
     },
-    "design-preview/servers/assets/agent-walk-web-v1.glb": {
+    "game/servers/assets/agent-walk-web-v1.glb": {
       "bytes": 11837512,
       "sha256": "06fa3802bc73ce8adb697ebed49bd16c3f655b7936aea116475677c9cd9847e4"
     },
-    "design-preview/servers/assets/broke-hq-web-v1.glb": {
+    "game/servers/assets/broke-hq-web-v1.glb": {
       "bytes": 10730304,
       "sha256": "a3e9e85dddee7633616fdb24ec1e4fab1026e7f3c37bf760e0a725779bd6dbfe"
     },
-    "design-preview/servers/assets/broke-server-v1.png": {
+    "game/servers/assets/broke-server-v1.png": {
       "bytes": 3699720,
       "sha256": "301efcb9f9cc33b7da86f7ad1cb4e639c366646b404c19d0638b0f5c44b658b2"
     },
-    "design-preview/servers/assets/closed-hq-web-v1.glb": {
+    "game/servers/assets/closed-hq-web-v1.glb": {
       "bytes": 11473516,
       "sha256": "edc28a20dc5048604a952d629541baee625afc576a68724e72c1fd9a01d42705"
     },
-    "design-preview/servers/assets/closed-server-v1.png": {
+    "game/servers/assets/closed-server-v1.png": {
       "bytes": 3358289,
       "sha256": "9ea075ef2db9468a4a9642d4bd3e9ac9ec02fa0330a2e33bc2133a1e927f9514"
     },
-    "design-preview/servers/assets/misanthropic-hq-web-v1.glb": {
+    "game/servers/assets/misanthropic-hq-web-v1.glb": {
       "bytes": 12466488,
       "sha256": "43007c6a5128c859fa1763d72276d060fb211b33e04d3d4e6c05000db80ec683"
     },
-    "design-preview/servers/assets/misanthropic-server-v1.png": {
+    "game/servers/assets/misanthropic-server-v1.png": {
       "bytes": 3688047,
       "sha256": "07adb40ff2fa20d914557cc2ac06623c0c9c14969f19ce5344f3f5771a1f909e"
     },
-    "design-preview/servers/assets/portraits/broke-agent-v06.jpg": {
+    "game/servers/assets/portraits/broke-agent-v06.jpg": {
       "bytes": 5254,
       "sha256": "39ce4d8177a51fb0bb5369e2850fd89ab9b8f0f979e25128ad8a531e774d0a59"
     },
-    "design-preview/servers/assets/portraits/broke-cloud-v06.jpg": {
+    "game/servers/assets/portraits/broke-cloud-v06.jpg": {
       "bytes": 13017,
       "sha256": "759833bfe670e92526bdf3eca067886c7bef85a030ce9dbb782cec625595c3a4"
     },
-    "design-preview/servers/assets/portraits/broke-cooler-v06.jpg": {
+    "game/servers/assets/portraits/broke-cooler-v06.jpg": {
       "bytes": 10268,
       "sha256": "c42735c43b28f761e6b950b638926a496e1655b1d2dcad8b3d593d7e93832e25"
     },
-    "design-preview/servers/assets/portraits/broke-firewall-v06.jpg": {
+    "game/servers/assets/portraits/broke-firewall-v06.jpg": {
       "bytes": 7117,
       "sha256": "b722349852af82ccc0904a033f90b8a361a04c3ec1e09329a8f17d65f3a4aa72"
     },
-    "design-preview/servers/assets/portraits/broke-harvester-v06.jpg": {
+    "game/servers/assets/portraits/broke-harvester-v06.jpg": {
       "bytes": 7705,
       "sha256": "78cc68bebaf224a61b57408bd25669a0c73cd32908d10963bacff2e94711d99c"
     },
-    "design-preview/servers/assets/portraits/broke-malware-v06.jpg": {
+    "game/servers/assets/portraits/broke-malware-v06.jpg": {
       "bytes": 5742,
       "sha256": "ae5bab16aef1c4a92342da48b8e00a20da30c75a8cee75d9fa62ab6ca90dbf81"
     },
-    "design-preview/servers/assets/portraits/broke-model-v06.jpg": {
+    "game/servers/assets/portraits/broke-model-v06.jpg": {
       "bytes": 14057,
       "sha256": "9b3288f8e25c7371b45dfc43c0ad7c9216d00825aa1234fe11934ad2ffb35f64"
     },
-    "design-preview/servers/assets/portraits/broke-researcher-v06.jpg": {
+    "game/servers/assets/portraits/broke-researcher-v06.jpg": {
       "bytes": 4694,
       "sha256": "df823702ea3b0194a260635451a12abe6b6b46e3a21d14445901e8691d462f41"
     },
-    "design-preview/servers/assets/portraits/closed-agent-v06.jpg": {
+    "game/servers/assets/portraits/closed-agent-v06.jpg": {
       "bytes": 4941,
       "sha256": "4a538eda2e8853f7f4fb885b8aa7eaea5127a699ae1d44609aa98d4e70102ed8"
     },
-    "design-preview/servers/assets/portraits/closed-cloud-v06.jpg": {
+    "game/servers/assets/portraits/closed-cloud-v06.jpg": {
       "bytes": 8598,
       "sha256": "301682fea101af41673cad4b623947df116fa4baa30fe33e1dd3c61cb786cc05"
     },
-    "design-preview/servers/assets/portraits/closed-cooler-v06.jpg": {
+    "game/servers/assets/portraits/closed-cooler-v06.jpg": {
       "bytes": 8164,
       "sha256": "1327fca4f9dce9f791e7601974ac37376dd7f9337faaf84dad93c9f23cf19274"
     },
-    "design-preview/servers/assets/portraits/closed-firewall-v06.jpg": {
+    "game/servers/assets/portraits/closed-firewall-v06.jpg": {
       "bytes": 5700,
       "sha256": "8c012bad4d0f2227d08bcb3bff15f334777d75b2762ec1a58912ff9c40511c81"
     },
-    "design-preview/servers/assets/portraits/closed-harvester-v06.jpg": {
+    "game/servers/assets/portraits/closed-harvester-v06.jpg": {
       "bytes": 7933,
       "sha256": "dfeb545f6a97353fd0ae501bf80ad7cd741faeb1c2300e7a52c0ce759a10f754"
     },
-    "design-preview/servers/assets/portraits/closed-malware-v06.jpg": {
+    "game/servers/assets/portraits/closed-malware-v06.jpg": {
       "bytes": 3362,
       "sha256": "401bd6d5a6f7e0c19fe98f54a6ef39511d76334a4fbf14e59a4f37a59b18b403"
     },
-    "design-preview/servers/assets/portraits/closed-model-v06.jpg": {
+    "game/servers/assets/portraits/closed-model-v06.jpg": {
       "bytes": 6124,
       "sha256": "8d375898336db4235c88fd3a0b3c9afc442fce7392dc5b0d14f619d17f78e632"
     },
-    "design-preview/servers/assets/portraits/closed-researcher-v06.jpg": {
+    "game/servers/assets/portraits/closed-researcher-v06.jpg": {
       "bytes": 3996,
       "sha256": "4d68401bd8e41f027effbae43597a37c210cdbb0d4314b7568a050c5be99ebcf"
     },
-    "design-preview/servers/assets/portraits/misanthropic-agent-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-agent-v06.jpg": {
       "bytes": 5041,
       "sha256": "6688e320b6fa85d191f800dcaafb70ddc33ab93483beb2428124ba59237de18b"
     },
-    "design-preview/servers/assets/portraits/misanthropic-cloud-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-cloud-v06.jpg": {
       "bytes": 9314,
       "sha256": "89119561b1ca0608896e6ef586243e646abd1ffe739c192c22cb09dadd444479"
     },
-    "design-preview/servers/assets/portraits/misanthropic-cooler-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-cooler-v06.jpg": {
       "bytes": 7997,
       "sha256": "c3be0e7ab25591a804c572cb11ce202689e374a06b9a0f6fbfaa787fb43e5143"
     },
-    "design-preview/servers/assets/portraits/misanthropic-firewall-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-firewall-v06.jpg": {
       "bytes": 8168,
       "sha256": "d91f61d596d57574ec7751c36c75a6451346f9e9299b8c06ae93ddb21898760b"
     },
-    "design-preview/servers/assets/portraits/misanthropic-harvester-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-harvester-v06.jpg": {
       "bytes": 8678,
       "sha256": "15d9fde39fce215354eed7fa85f5f3d6034bd5265e4ec2afad076ec4315a8509"
     },
-    "design-preview/servers/assets/portraits/misanthropic-malware-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-malware-v06.jpg": {
       "bytes": 3246,
       "sha256": "7e1fcc37e2b86383e44370aef81e354d699fea87430e3c544227ff4ec103dc3b"
     },
-    "design-preview/servers/assets/portraits/misanthropic-model-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-model-v06.jpg": {
       "bytes": 5953,
       "sha256": "5f1b05c08a75f254c6e80c555e7b00acae95742520af0c205215195cddbb2606"
     },
-    "design-preview/servers/assets/portraits/misanthropic-researcher-v06.jpg": {
+    "game/servers/assets/portraits/misanthropic-researcher-v06.jpg": {
       "bytes": 4092,
       "sha256": "71c1086f505f9779efcc8ba9f455fb19feed73df49672c00be11d248a41d7aaf"
     },
-    "design-preview/servers/assets/researcher-field-v1.glb": {
+    "game/servers/assets/researcher-field-v1.glb": {
       "bytes": 2232376,
       "sha256": "ceeeade95d4e6e483199c17980cdb4915d2d4e072ed9b0318458d89a5862efb9"
     },
-    "design-preview/servers/assets/researcher-idle-clip-v1.glb": {
+    "game/servers/assets/researcher-idle-clip-v1.glb": {
       "bytes": 136692,
       "sha256": "efd350369128f65a90a8ba78bda519bed2953c683aa6d69cf454482466376080"
     },
-    "design-preview/servers/assets/researcher-walk-web-v1.glb": {
+    "game/servers/assets/researcher-walk-web-v1.glb": {
       "bytes": 14828568,
       "sha256": "d6027c356f4acab5b5ef14e4ae099f30c0a760a595adde04082ea4d6066a81bc"
     }

@@ -9,7 +9,7 @@ isolated replay workers. SQLite stores private accounts, journals and results.
 
 | Path | Responsibility |
 | --- | --- |
-| `design-preview/demo/engine.js`, `operation.js` | Unit orders, economy, combat, mission lifecycle |
+| `game/demo/engine.js`, `operation.js` | Unit orders, economy, combat, mission lifecycle |
 | `demo/faction-rules.js`, `building-catalog.js`, `faction-tech.js` | Asymmetry, buildings and research |
 | `demo/enemy-ai.js`, `tutorial.js` | Opponent decisions and faction tutorials |
 | `demo/ranked-protocol.js`, `ranked-client.js` | Serializable commands and server session protocol |
@@ -20,7 +20,7 @@ isolated replay workers. SQLite stores private accounts, journals and results.
 | `api/operations.mjs`, `storage-lock.mjs` | Private operator socket, backup, restore, updates |
 | `release/server.mjs`, `scripts/build-release.mjs` | Immutable runtime packaging and HTTP allowlist |
 
-Paths abbreviated as `demo/` or `servers/` are under `design-preview/`.
+Paths abbreviated as `demo/` or `servers/` are under `game/`.
 The older `v2/` and `server-demo/` pages are design history, not the current game.
 
 ## Verified play

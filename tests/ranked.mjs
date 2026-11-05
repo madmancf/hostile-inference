@@ -5,8 +5,8 @@ import os from 'node:os';
 import path from 'node:path';
 import http from 'node:http';
 import {RankedService,rankedHandler} from '../api/ranked-service.mjs';
-import {createRankedGame,applyAction,validateAction,replay,stateDigest,FACTION_IDS} from '../design-preview/demo/ranked-protocol.js';
-import {tickOperation} from '../design-preview/demo/operation.js';
+import {createRankedGame,applyAction,validateAction,replay,stateDigest,FACTION_IDS} from '../game/demo/ranked-protocol.js';
+import {tickOperation} from '../game/demo/operation.js';
 import {drive} from './ranked-policy.mjs';
 
 const directory=await fs.mkdtemp(path.join(os.tmpdir(),'hi-ranked-check-'));let now=Date.now(),service=await new RankedService({directory,now:()=>now}).init(),server;

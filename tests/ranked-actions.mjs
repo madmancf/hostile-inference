@@ -1,9 +1,9 @@
 const output=process.env.HI_RANKED_OUTPUT||'output/playwright/ranked-current';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import {createRankedGame,applyAction,replay,stateDigest,FACTION_IDS} from '../design-preview/demo/ranked-protocol.js';
-import {tickOperation} from '../design-preview/demo/operation.js';
-import {tree} from '../design-preview/demo/faction-tech.js';
+import {createRankedGame,applyAction,replay,stateDigest,FACTION_IDS} from '../game/demo/ranked-protocol.js';
+import {tickOperation} from '../game/demo/operation.js';
+import {tree} from '../game/demo/faction-tech.js';
 
 const reports=[];
 for(const faction of FACTION_IDS){

@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {tickGame,point,command,deploy} from '../design-preview/demo/engine.js';
-import {tree,facilitySite,techBonuses,startProject,damageFacility} from '../design-preview/demo/faction-tech.js';
-import {LocalArchive} from '../design-preview/demo/local-archive.js';
-import {createTutorial,tutorialAction,updateTutorial,advanceTutorial,tutorialAllows,tutorialAbility,inspectTutorial,chooseTutorialBranch,tutorialPhase,LESSONS,UNIT_GUIDE} from '../design-preview/demo/tutorial.js';
+import {tickGame,point,command,deploy} from '../game/demo/engine.js';
+import {tree,facilitySite,techBonuses,startProject,damageFacility} from '../game/demo/faction-tech.js';
+import {LocalArchive} from '../game/demo/local-archive.js';
+import {createTutorial,tutorialAction,updateTutorial,advanceTutorial,tutorialAllows,tutorialAbility,inspectTutorial,chooseTutorialBranch,tutorialPhase,LESSONS,UNIT_GUIDE} from '../game/demo/tutorial.js';
 const factions=['misanthropic','closed','broke'],results=[],checkpoints=[];
 const storage=()=>({data:new Map(),getItem(k){return this.data.get(k)||null;},setItem(k,v){this.data.set(k,v);},removeItem(k){this.data.delete(k);}});
 export function guide(g,branch=0,finalBranch=branch){
@@ -61,7 +61,7 @@ for(let oldStep=0;oldStep<10;oldStep++){
 // Research progress and irreversible final selection persist; final bonuses actually disappear on destruction.
 const paid=createTutorial('broke');step(paid,'specialize');chooseTutorialBranch(paid,1);for(const id of ['foundry','reactor','salvage-rights','run-hot']){command(paid,paid.units.filter(u=>u.role==='researcher'&&u.team==='player').map(u=>u.id),'research','lab');assert.ok(startProject(paid,id).ok);let work=0;while(paid.infrastructure.broke.project&&work++<4000)tickGame(paid,.05);}assert.ok(techBonuses(paid).burstDamage);damageFacility(paid,'broke','facility2',9999);assert.equal(techBonuses(paid).burstDamage,undefined);
 const paused=createTutorial('misanthropic');paused.paused=true;tickGame(paused,10);assert.equal(paused.time,0);assert.equal(Object.keys(UNIT_GUIDE).length,8);
-const paths=['design-preview/demo/tutorial.js','design-preview/demo/engine.js','design-preview/demo/faction-tech.js','design-preview/demo/faction-rules.js','design-preview/demo/local-archive.js','checks/tutorial.mjs'];
+const paths=['game/demo/tutorial.js','game/demo/engine.js','game/demo/faction-tech.js','game/demo/faction-rules.js','game/demo/local-archive.js','tests/tutorial.mjs'];
 const sourceSHA256=Object.fromEntries(await Promise.all(paths.map(async p=>[p,createHash('sha256').update(await fs.readFile(p)).digest('hex')])));
 await fs.mkdir('output/playwright',{recursive:true});await fs.writeFile('output/playwright/tutorial-checkpoints-v0.12.json',JSON.stringify(checkpoints));
 const report={status:'passed',switchedFinalBranches:switched,at:new Date().toISOString(),tutorials:results,properties:['All 18 faction/rival/branch combinations finish 17 lessons','Explicit branch choice, paid costs and prerequisite progress','Wrong ability and wrong continent do not pass objectives','Arrival and sabotage wait for Continue','All expanded checkpoints save and resume','All 10 legacy steps migrate without losing paid state','Destroyed research branches lose actual bonuses','Pause and insufficient funds respected'],sourceSHA256};await fs.writeFile('output/playwright/tutorial-mechanics-v0.12.json',JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report,null,2));

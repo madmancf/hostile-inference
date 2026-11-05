@@ -1,93 +1,106 @@
-# Hostile Inference
+<div align="center">
 
-A browser strategy game about fictional AI laboratories competing for compute,
-energy, cooling and control. Command escaped models, researchers, containment
-systems and infiltrating agents in short operations against faction AI.
+# HOSTILE INFERENCE
 
-**Open-source code · MIT · Contributions from humans and coding agents welcome.**
-This is a development release, not a hosted public game. The external generated
-art pack is excluded pending redistribution clearance. A fresh clone runs the
-simulation, server and account tests; the complete 3D game requires that pack.
-See [assets](docs/ASSETS.md). No graphics have been downgraded to make this release.
+**Three laboratories. One compute war.**
 
-## Three laboratories
+A browser RTS about runaway models, corporate rivalry and keeping the servers alive.
 
-| Faction | Identity | Approach |
+[Contribute](.github/CONTRIBUTING.md) · [Agent guide](AGENTS.md) · [Architecture](docs/ARCHITECTURE.md) · [Roadmap](docs/ROADMAP.md)
+
+[![CI](https://github.com/madmancf/hostile-inference/actions/workflows/ci.yml/badge.svg)](https://github.com/madmancf/hostile-inference/actions/workflows/ci.yml)
+
+</div>
+
+## Choose your laboratory
+
+| Misanthropic | Closed AI | Broke Labs |
 | --- | --- | --- |
-| Misanthropic | Containment, resilient research and protected models | Hold a formation, absorb pressure, advance together |
-| Closed AI | Connected infrastructure and coordinated models | Build the network, mark targets, concentrate attacks |
-| Broke Labs | Overclocking, swarms and cooling | Strike in bursts, manage heat, recover quickly |
+| **Contain. Protect. Endure.** | **Connect. Coordinate. Control.** | **Overclock. Swarm. Recover.** |
+| Resilient research, protected models and patient advances. | Linked infrastructure, marked targets and concentrated attacks. | Fast pressure, burst damage and a constant fight against heat. |
 
-Each faction has distinct procedural units and facilities, abilities, research
-choices and enemy tactics. First Light teaches the systems; Blackout Protocol
-is a solo operation with a 15-minute limit. Server-verified runs feed player and
-faction standings. This is asynchronous faction competition, not live PvP.
+Build a campus, keep energy and cooling flowing, develop your faction's technology,
+then send a team into a rival server-continent. Researchers, escaped models,
+containment units and infiltrators each have a role.
 
-## Get started
+- **Learn:** First Light teaches your faction's economy, buildings and counters.
+- **Fight:** Blackout Protocol is a solo operation against faction AI, capped at 15 minutes.
+- **Compete:** Server-verified results contribute to player and faction standings.
 
-Requires Node 24 or 26, npm and Git on Linux or macOS (Windows: use WSL2).
+The factions are fictional satire. This is an independent project, unaffiliated
+with real AI laboratories. Competition is asynchronous; live PvP is not implemented.
+
+## Start contributing
+
+Human and LLM-assisted pull requests are welcome. No paid AI service is required.
+Use **Node 24 or 26** on Linux or macOS; use WSL2 on Windows.
 
 ```sh
 git clone https://github.com/madmancf/hostile-inference.git
 cd hostile-inference
 npm ci
-npm run check
 npm test
 ```
 
-No AI subscription, model API key or game account is needed to contribute.
-The tests include all three factions, legal replay victories, accounts,
-leaderboards, durable verification, recovery and historical journal memory.
+Pick a focused task from the [roadmap](docs/ROADMAP.md), read the
+[contribution guide](.github/CONTRIBUTING.md), and open a PR. Coding assistants
+should start with [AGENTS.md](AGENTS.md). All contributions receive maintainer review.
 
-To work on accounts or the server without the art pack:
+**Source release:** the public clone runs simulation, server and account tests.
+The external generated art pack is not included while redistribution rights are
+being cleared, so the complete 3D game needs that pack. See [asset setup](docs/ASSETS.md).
+There is no hosted playable demo yet.
+
+<details>
+<summary><strong>Run locally</strong></summary>
+
+For account and server work without the art pack:
 
 ```sh
 npm run dev:server
 ```
 
 Open <http://127.0.0.1:4178/account/index.html> or
-<http://127.0.0.1:4178/leaderboards/index.html>. The server binds to loopback.
-To run the full game after providing authorized assets:
+<http://127.0.0.1:4178/leaderboards/index.html>.
+
+With an authorized full-quality art pack:
 
 ```sh
 npm run check:assets
 npm start
 ```
 
-Open <http://127.0.0.1:4178/>. Learn to play or practice without an account;
-sign up and choose a faction for verified operations. Local email uses a private
-outbox; no external mail provider is required. Keep `.runtime/` private.
+Open <http://127.0.0.1:4178/> for training, practice and verified operations.
+Local email uses a private outbox. Keep `.runtime/` private. The server binds to
+loopback; these commands do not deploy a public service.
 
-## Contribute
+</details>
 
-Read [CONTRIBUTING.md](CONTRIBUTING.md), then pick a task from
-[the roadmap](docs/ROADMAP.md) or propose an [issue](https://github.com/madmancf/hostile-inference/issues).
-Fork, make a focused branch, run the relevant checks, and submit a PR.
-[AGENTS.md](AGENTS.md) gives coding assistants the architecture, constraints and
-test commands. AI-assisted contributions receive the same review as other code.
+## Find your way around
 
-- [Architecture](docs/ARCHITECTURE.md)
-- [Tests and background browser setup](docs/TESTING.md)
-- [Art scope and rights](docs/ASSETS.md)
-- [Operator backup/recovery guide](docs/operations-0.20.md)
-- [Email configuration](docs/email-setup-0.19.md)
-- [Security reporting](SECURITY.md)
+| Directory | What's inside |
+| --- | --- |
+| [`game/`](game/index.html) | Browser interface, simulation, renderer and faction systems |
+| [`api/`](api/ranked-service.mjs) | Accounts, command recording, verification and leaderboards |
+| [`tests/`](tests/contributor-browser.mjs) | Gameplay, persistence, security and background browser checks |
+| [`release/`](release/server.mjs) | Production server and runtime manifest |
+| [`scripts/`](scripts/build-release.mjs) | Development, validation, packaging and operator commands |
+| [`docs/`](docs/ARCHITECTURE.md) | Architecture, setup, assets and operating guides |
+| [`.github/`](.github/CONTRIBUTING.md) | Contribution policies, issue/PR templates and CI |
 
-## Current limits
+## Development status
 
-Full graphics and a 60 FPS target are retained; **60 FPS is not yet certified**.
-Automated victories establish solvability and replay integrity, not competitive
-fairness or human enjoyment. The server's historical local soak covered eight
-concurrent streams for 30 minutes; hosted capacity still needs validation.
-Real mail/domain setup, hosting, independent player testing and asset clearance
-remain launch work. Nothing in this repository deploys a service automatically.
+Three factions, their tutorials, operations, local accounts and verified standings
+are implemented. Automated tests cover replay integrity and recovery. Wider
+balance testing, independent newcomer playtests, art clearance and hosted setup
+remain on the [roadmap](docs/ROADMAP.md).
 
-The full-quality runtime can be packaged with `npm run build` once authorized
-assets are present. The immutable output goes under ignored `dist/`; do not
-publish that bundle until its external asset rights are cleared.
+Full graphics are retained. **60 FPS remains a target awaiting certification.**
+The local server soak covered eight concurrent streams for 30 minutes; that is
+not a hosted capacity guarantee. No automatic deployment is configured.
 
-## License
+[Testing](docs/TESTING.md) · [Operations](docs/operations-0.20.md) · [Email setup](docs/email-setup-0.19.md) · [Report a vulnerability](.github/SECURITY.md)
 
-Original source and documentation: [MIT](LICENSE). Vendored dependencies retain
-their [own notices](THIRD_PARTY_NOTICES.md). Excluded art is not covered by MIT.
-The factions are fictional satire; the project is unaffiliated with real AI labs.
+Original source and documentation are [MIT licensed](LICENSE).
+[Third-party notices](docs/THIRD_PARTY_NOTICES.md) retain dependency licenses;
+the excluded art pack is not covered by MIT.

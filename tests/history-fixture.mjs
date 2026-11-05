@@ -4,8 +4,8 @@ import fs from 'node:fs/promises';
 import {randomUUID,createHash} from 'node:crypto';
 import {Accounts,SEASON} from '../api/accounts.mjs';
 import {rulesManifest} from '../api/ranked-rules.mjs';
-import {createRankedGame,applyAction,stateDigest} from '../design-preview/demo/ranked-protocol.js';
-import {tickOperation} from '../design-preview/demo/operation.js';
+import {createRankedGame,applyAction,stateDigest} from '../game/demo/ranked-protocol.js';
+import {tickOperation} from '../game/demo/operation.js';
 import {drive} from './ranked-policy.mjs';
 export async function seedHistory(directory,count=10000){
  const accounts=await new Accounts({file:path.join(directory,'accounts.sqlite')}).init();const rules=await rulesManifest(),players=[],samples=new Map(),password='Disposable capacity test password!';

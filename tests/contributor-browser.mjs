@@ -26,7 +26,7 @@ const stop=async()=>{
 for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{interrupted=true;void stop();});
 try{
   // Do not inherit real mail or storage configuration from the parent environment.
-  server=spawn(process.execPath,['design-preview/server.mjs'],{env:{PATH:process.env.PATH,HOSTILE_PREVIEW_PORT:String(port),HI_PREVIEW_DATA_DIR:tmp},stdio:['ignore','pipe','pipe']});
+  server=spawn(process.execPath,['game/server.mjs'],{env:{PATH:process.env.PATH,HOSTILE_PREVIEW_PORT:String(port),HI_PREVIEW_DATA_DIR:tmp},stdio:['ignore','pipe','pipe']});
   await new Promise((resolve,reject)=>{
     const timeout=setTimeout(()=>reject(Error('Local test server did not start: '+logs)),15000);
     for(const stream of [server.stdout,server.stderr])stream.on('data',b=>{logs=(logs+b).slice(-2000);if(logs.includes('BOARD_URL:')){clearTimeout(timeout);resolve();}});

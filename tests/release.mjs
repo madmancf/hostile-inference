@@ -26,7 +26,7 @@ const req=async(route,body,cookie,headers={})=>{const r=await fetch(base+route,{
 const test=async(name,fn)=>{await fn();checks.push(name);console.log('PASS '+name);};
 try{
  await test('All packaged asset hashes match; full game PNGs and GLBs are unchanged',async()=>{
-  for(const [name,entry]of Object.entries(manifest.assets)){const b=await fs.readFile(path.join(release,'public',name));assert.equal(createHash('sha256').update(b).digest('hex'),entry.sha256,name);assert.equal(b.length,entry.bytes);if(/\.(glb|png)$/.test(name))assert.equal(entry.sha256,manifest.sourceSHA256['design-preview/'+name],name);}
+  for(const [name,entry]of Object.entries(manifest.assets)){const b=await fs.readFile(path.join(release,'public',name));assert.equal(createHash('sha256').update(b).digest('hex'),entry.sha256,name);assert.equal(b.length,entry.bytes);if(/\.(glb|png)$/.test(name))assert.equal(entry.sha256,manifest.sourceSHA256['game/'+name],name);}
   const names=Object.keys(manifest.assets);assert.equal(names.filter(n=>n.endsWith('.glb')).length,9);assert.ok(!names.some(n=>/checks\/|render-profiler|original\//.test(n)));assert.equal(await fs.stat(path.join(release,'node_modules')).catch(()=>null),null);
  });
  await start();
@@ -35,7 +35,7 @@ try{
   for(const route of Object.keys(manifest.routes)){const page=await fetch(base+route);assert.equal(page.status,200);assert.equal(page.headers.get('cache-control'),'no-cache');assert.match(await page.text(),new RegExp('/r/'+manifest.id+'/'));}
  });
  await test('Only manifest assets are public; server, checks, source art and feedback routes are closed',async()=>{
-  for(const route of ['/server.mjs','/package.json','/manifest.json','/api/accounts.mjs','/checks/browser-accounts.mjs','/provenance/test.json','/.runtime/accounts/accounts.sqlite','/v2/index.html','/api/feedback','/r/'+manifest.id+'/servers/render-profiler.js','/r/'+manifest.id+'/__proto__','/r/'+manifest.id+'/%2e%2e%2fserver.mjs']){const r=await fetch(base+route);assert.equal(r.status,404,route);}
+  for(const route of ['/server.mjs','/package.json','/manifest.json','/api/accounts.mjs','/tests/browser-accounts.mjs','/provenance/test.json','/.runtime/accounts/accounts.sqlite','/v2/index.html','/api/feedback','/r/'+manifest.id+'/servers/render-profiler.js','/r/'+manifest.id+'/__proto__','/r/'+manifest.id+'/%2e%2e%2fserver.mjs']){const r=await fetch(base+route);assert.equal(r.status,404,route);}
   const r=await fetch(base+'/api/feedback',{method:'POST',body:'{}'});assert.equal(r.status,405);
  });
  await test('Immutable URLs, gzip, ETags, HEAD and canonical navigation behave correctly',async()=>{
@@ -61,7 +61,7 @@ try{
   }
  });
  await test('Portable replay workers run all six matchups against the identical rules version',async()=>{
-  const {replay,stateDigest}=await import(pathToFileURL(path.join(release,'design-preview/demo/ranked-protocol.js')));
+  const {replay,stateDigest}=await import(pathToFileURL(path.join(release,'game/demo/ranked-protocol.js')));
   for(const faction of Object.keys(users))for(const rival of Object.keys(users).filter(f=>f!==faction)){
    const config={faction,rival,difficulty:'standard'},r=replay(config,[]),checkpoint={tick:r.tick,digest:await stateDigest(r.game)};
    const result=await new Promise((resolve,reject)=>{const worker=new Worker(path.join(release,'api/replay-worker.mjs'),{workerData:{config,actions:[],checkpoint,rulesId:manifest.rules}});worker.once('error',reject);worker.once('message',resolve);});assert.equal(result.ok,true,result.error);assert.equal(result.result.digest,checkpoint.digest);assert.equal(result.result.rulesId,manifest.rules);

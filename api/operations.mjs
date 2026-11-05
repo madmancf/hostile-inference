@@ -97,7 +97,10 @@ export async function checkUpdate(ranked,directory){
  for(const [name,item]of Object.entries(manifest.assets)){if(path.isAbsolute(name)||name.split('/').includes('..'))throw Error('Unsafe release asset');const bytes=await fs.readFile(path.join(root,'public',name));if(sha(bytes)!==item.sha256||bytes.length!==item.bytes)throw Error('Candidate asset mismatch: '+name);}
  for(const [name,digest]of Object.entries(manifest.privateSHA256||{})){if(path.isAbsolute(name)||name.split('/').includes('..'))throw Error('Unsafe private release file');if(sha(await fs.readFile(path.join(root,name)))!==digest)throw Error('Candidate runtime mismatch: '+name);}
  if(!manifest.privateSHA256?.['server.mjs']||!manifest.privateSHA256?.['api/replay-worker.mjs'])throw Error('Candidate has no private runtime integrity manifest');
- const actualRules={};for(const name of RULE_FILES)actualRules[name]=sha(await fs.readFile(path.join(root,'design-preview',name)));if(sha(JSON.stringify(actualRules))!==manifest.rules)throw Error('Candidate rules files disagree with the frozen season');
+ // Accept retained pre-reorganization bundles; validate every declared rule tree.
+ const ruleRoots=['game','design-preview'].filter(prefix=>RULE_FILES.every(name=>manifest.privateSHA256?.[prefix+'/'+name]));
+ if(!ruleRoots.length)throw Error('Candidate has no complete frozen rules tree');
+ for(const prefix of ruleRoots){const actualRules={};for(const name of RULE_FILES)actualRules[name]=sha(await fs.readFile(path.join(root,prefix,name)));if(sha(JSON.stringify(actualRules))!==manifest.rules)throw Error('Candidate rules files disagree with the frozen season');}
  return {ready:true,release:manifest.id,rulesId:manifest.rules,admission:status.admission,policy:'Stop old process; start candidate with same data; verify health and saved results; explicitly resume admission. Retain the previous compatible bundle for rollback.'};
 }
 

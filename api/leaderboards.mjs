@@ -1,6 +1,6 @@
 import {clientSource} from './client-source.mjs';
 import {SEASON,cookieToken,localRequest,accountError} from './accounts.mjs';
-import {FACTION_IDS,MAX_TICKS} from '../design-preview/demo/ranked-protocol.js';
+import {FACTION_IDS,MAX_TICKS} from '../game/demo/ranked-protocol.js';
 export const LEADERBOARD_VERSION=1,POLICY='balanced-best-two-top20-v1',SLOTS=20,PAGE_SIZE=20;
 const validHash=s=>typeof s==='string'&&/^[a-f0-9]{64}$/.test(s);
 const compareText=(a,b)=>a<b?-1:a>b?1:0;

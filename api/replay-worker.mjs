@@ -1,6 +1,6 @@
 import {parentPort,workerData} from 'node:worker_threads';
 import {createHash} from 'node:crypto';
-import {replay,canonicalState,MAX_TICKS} from '../design-preview/demo/ranked-protocol.js';
+import {replay,canonicalState,MAX_TICKS} from '../game/demo/ranked-protocol.js';
 import {rulesManifest} from './ranked-rules.mjs';
 const invalid=message=>{const e=Error(message);e.invalid=true;throw e;};
 const invalidCommands=new Set(['Cannot command rival units','Continent not visited','Unknown faction project','Commands after terminal state','Commands require an active operation']);

@@ -1,5 +1,5 @@
-import {CLIENT_RULES_ID} from '../design-preview/demo/rules-version.js';
-import {MODEL_ASSETS} from '../design-preview/servers/model-asset-keys.js';
+import {CLIENT_RULES_ID} from '../game/demo/rules-version.js';
+import {MODEL_ASSETS} from '../game/servers/model-asset-keys.js';
 import vm from 'node:vm';
 import {execFileSync} from 'node:child_process';
 import fs from 'node:fs/promises';
@@ -12,13 +12,13 @@ import {RULE_FILES,rulesManifest} from '../api/ranked-rules.mjs';
 if(!vm.SourceTextModule){execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(import.meta.url)],{stdio:'inherit'});process.exit(0);}
 if(CLIENT_RULES_ID!==(await rulesManifest()).id)throw Error('Browser rules version is stale; update rules-version.js with the exact rule manifest hash');
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
-const source=path.join(root,'design-preview'),pkg=JSON.parse(await fs.readFile(path.join(root,'package.json')));
+const source=path.join(root,'game'),pkg=JSON.parse(await fs.readFile(path.join(root,'package.json')));
 const hash=b=>createHash('sha256').update(b).digest('hex');
 const assets=new Map(),sources={};
 async function add(name,transform){
  if(assets.has(name))return;
  if(name.startsWith('../')||path.isAbsolute(name))throw Error('Unsafe asset path '+name);
- let bytes=await fs.readFile(path.join(source,name));sources['design-preview/'+name]=hash(bytes);
+ let bytes=await fs.readFile(path.join(source,name));sources['game/'+name]=hash(bytes);
  if(transform)bytes=Buffer.from(transform(bytes.toString()));assets.set(name,bytes);
 }
 function runtimeJS(name,s){
@@ -52,15 +52,17 @@ const models=JSON.parse(await fs.readFile(path.join(source,'servers/assets/premi
 await add('servers/assets/premium-models.json',()=>JSON.stringify(models,null,2)+'\n');
 for(const name of [...Object.values(models.hq),...Object.entries(models).filter(([k])=>k!=='hq').map(([,v])=>v)]){if(typeof name!=='string'||!name.endsWith('.glb'))throw Error('Unexpected runtime model');await add('servers/assets/'+name);const bytes=assets.get('servers/assets/'+name),key=MODEL_ASSETS[name];if(!key||key.bytes!==bytes.length||key.sha256!==hash(bytes))throw Error('Stale model cache key: '+name);}
 await add('vendor/three/LICENSE');
-const pageSources={};for(const p of pages){pageSources[p]=await fs.readFile(path.join(source,p),'utf8');sources['design-preview/'+p]=hash(pageSources[p]);}
+const pageSources={};for(const p of pages){pageSources[p]=await fs.readFile(path.join(source,p),'utf8');sources['game/'+p]=hash(pageSources[p]);}
 const privateFiles=new Map();for(const name of apiFiles)privateFiles.set('api/'+name,await fs.readFile(path.join(root,'api',name)));
 privateFiles.set('LICENSE',await fs.readFile(path.join(root,'LICENSE')));
-for(const name of RULE_FILES)privateFiles.set('design-preview/'+name,await fs.readFile(path.join(source,name)));
+// Retain the former private layout so installed 0.20 update validators accept
+// this bundle. Both trees contain identical frozen rules and are hash-verified.
+for(const name of RULE_FILES){const bytes=await fs.readFile(path.join(source,name));privateFiles.set('game/'+name,bytes);privateFiles.set('design-preview/'+name,bytes);}
 privateFiles.set('EMAIL-SETUP.md',await fs.readFile(path.join(root,'docs/email-setup-0.19.md')));
 privateFiles.set('OPERATIONS.md',await fs.readFile(path.join(root,'docs/operations-0.20.md')));
 privateFiles.set('scripts/operate.mjs',await fs.readFile(path.join(root,'scripts/operate.mjs')));
 privateFiles.set('server.mjs',await fs.readFile(path.join(root,'release/server.mjs')));
-for(const [name,bytes] of privateFiles)sources[name==='server.mjs'?'release/server.mjs':name==='OPERATIONS.md'?'docs/operations-0.20.md':name==='EMAIL-SETUP.md'?'docs/email-setup-0.19.md':name]=hash(bytes);
+for(const [name,bytes] of privateFiles)sources[name==='server.mjs'?'release/server.mjs':name==='OPERATIONS.md'?'docs/operations-0.20.md':name==='EMAIL-SETUP.md'?'docs/email-setup-0.19.md':name.startsWith('design-preview/')?'game/'+name.slice('design-preview/'.length):name]=hash(bytes);
 for(const name of ['scripts/build-release.mjs','release/manifest.mjs','package.json','node_modules/meshoptimizer/LICENSE.md'])sources[name]=hash(await fs.readFile(path.join(root,name)));
 const id=hash(JSON.stringify({version:pkg.version,sources})).slice(0,20);
 // Bind admitted browser starts to this immutable runtime namespace.

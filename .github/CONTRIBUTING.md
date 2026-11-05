@@ -8,8 +8,8 @@ No particular assistant, paid API, editor, or agent service is required.
 
 1. Fork the repository, clone your fork, and create a topic branch from `main`.
 2. Use Node 24 or 26 on Linux or macOS. Run `npm ci`, `npm run check`, and `npm test`.
-3. Read [the architecture](docs/ARCHITECTURE.md), [test guide](docs/TESTING.md),
-   and [agent instructions](AGENTS.md). See [the roadmap](docs/ROADMAP.md) for work.
+3. Read [the architecture](../docs/ARCHITECTURE.md), [test guide](../docs/TESTING.md),
+   and [agent instructions](../AGENTS.md). See [the roadmap](../docs/ROADMAP.md) for work.
 4. Keep one concrete change per PR. Open a design issue first for major mechanics,
    ranking rules, data migrations, dependencies, or a visual direction change.
 5. Include the problem, observable change, exact checks run, and known limits.
@@ -17,7 +17,7 @@ No particular assistant, paid API, editor, or agent service is required.
 
 The public repository contains code, procedural geometry and tests. External
 generated art is excluded pending redistribution clearance. `npm test` works
-without it. See [asset setup](docs/ASSETS.md) before attempting the 3D demo.
+without it. See [asset setup](../docs/ASSETS.md) before attempting the 3D demo.
 Do not replace missing art with lower-quality assets and claim visual parity.
 
 ## LLM-assisted work

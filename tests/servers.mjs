@@ -1,7 +1,7 @@
-import { unitType } from '../design-preview/demo/faction-rules.js';
+import { unitType } from '../game/demo/faction-rules.js';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { createGame, tickGame, command, deploy, cancelDeployment, spawn, launchRaid, returnHome, viewServer, ability, compute, point, route, ROLES, SERVERS } from '../design-preview/demo/engine.js';
+import { createGame, tickGame, command, deploy, cancelDeployment, spawn, launchRaid, returnHome, viewServer, ability, compute, point, route, ROLES, SERVERS } from '../game/demo/engine.js';
 const tests=[];const check=(name,fn)=>{fn();tests.push(name);};
 const own=g=>g.units.filter(u=>u.team==='player');
 function operate(g){command(g,own(g).map(u=>u.id),'research','lab');command(g,own(g).map(u=>u.id),'harvest','grid');command(g,own(g).map(u=>u.id),'cool','intake');}
@@ -20,5 +20,5 @@ check('Movement ramps up, records heading and advances motion by travelled dista
 check('Pause freezes simulation; victory, defeat and timeout are distinct',()=>{const g=createGame();g.paused=true;tickGame(g,10);assert.equal(g.time,0);const v=createGame();v.servers.closed.integrity=0;tickGame(v,.05);assert.equal(v.result,'victory');assert.equal(v.attackTarget,'closed');const d=createGame();d.servers[d.faction].integrity=0;tickGame(d,.05);assert.equal(d.result,'defeat');const t=createGame();t.units=[];t.nextWave=Infinity;tickGame(t,181);assert.equal(t.result,'timeout');});
 const runs=[];
 check('All six faction-versus-rival showcases complete with transfers and deterministic results',()=>{for(const faction of Object.keys(SERVERS))for(const target of Object.keys(SERVERS).filter(id=>id!==faction)){const run=()=>{const g=createGame(faction);operate(g);for(let i=0;i<3600&&!g.result;i++)direct(g,target);assert.equal(g.result,'victory');assert.equal(g.activeServer,target);assert.ok(g.time<140);assert.ok(g.stats.transfers>=1);assert.ok(g.stats.deliveries>=1);for(const n of [g.funds,g.energy,g.heat,g.quality,g.progress])assert.ok(Number.isFinite(n));return g;};const a=run(),b=run();assert.deepEqual(a,b);runs.push({faction,target,seconds:Math.round(a.time*10)/10,transfers:a.stats.transfers,contained:a.stats.contained});}});
-const assets=[];if(process.env.HI_TEST_ART_ATLASES==='1')for(const faction of Object.keys(SERVERS)){const p=`design-preview/servers/assets/${faction}-motion-v1.png`,b=await fs.readFile(p);assert.equal(b[25],6,'Motion atlas must preserve alpha');assert.equal(b.readUInt32BE(20),b.readUInt32BE(16)*2,'4x8 equal-cell atlas aspect');assets.push({faction,frames:32,alpha:true});}
+const assets=[];if(process.env.HI_TEST_ART_ATLASES==='1')for(const faction of Object.keys(SERVERS)){const p=`game/servers/assets/${faction}-motion-v1.png`,b=await fs.readFile(p);assert.equal(b[25],6,'Motion atlas must preserve alpha');assert.equal(b.readUInt32BE(20),b.readUInt32BE(16)*2,'4x8 equal-cell atlas aspect');assets.push({faction,frames:32,alpha:true});}
 console.log(JSON.stringify({checks:tests.length,tests,showcases:runs,animationAssets:assets,artAtlasCheck:process.env.HI_TEST_ART_ATLASES==='1'?'passed':'not run: excluded design atlases; public suite tests simulation',status:'passed'},null,2));

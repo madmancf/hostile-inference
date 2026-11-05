@@ -1,6 +1,6 @@
 # Agent contributor instructions
 
-Read `README.md`, `CONTRIBUTING.md` and `docs/ARCHITECTURE.md` before editing.
+Read `README.md`, `.github/CONTRIBUTING.md` and `docs/ARCHITECTURE.md` before editing.
 These instructions apply to Codex, Claude, Gemini and other coding assistants.
 
 ## Scope and source of truth
@@ -17,12 +17,12 @@ These instructions apply to Codex, Claude, Gemini and other coding assistants.
 
 ## Where to work
 
-- Simulation, faction rules, tech, AI: `design-preview/demo/`.
-- Three.js rendering, articulated units, territory geometry: `design-preview/servers/`.
+- Simulation, faction rules, tech, AI: `game/demo/`.
+- Three.js rendering, articulated units, territory geometry: `game/servers/`.
 - Accounts, replay workers, results and operations: `api/`.
-- Entry/account/standings UI: `design-preview/entry/`, `account/`, `leaderboards/`.
+- Entry/account/standings UI: `game/entry/`, `account/`, `leaderboards/`.
 - Packaging: `release/` and `scripts/build-release.mjs`.
-- Tests: `checks/`. New public files must pass the explicit `.gitignore` allowlist.
+- Tests: `tests/`. New public files must pass the explicit `.gitignore` allowlist.
 
 ## Verification
 

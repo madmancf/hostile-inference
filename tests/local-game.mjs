@@ -1,14 +1,14 @@
-import { kit, unitType } from '../design-preview/demo/faction-rules.js';
+import { kit, unitType } from '../game/demo/faction-rules.js';
 import assert from 'node:assert/strict';
-import { createGame, spawn, tickGame, deploy, launchRaid, command, compute, holdPosition, point, ROLES, ability } from '../design-preview/demo/engine.js';
-import { createOperation, activateEconomy, directOperation, tickOperation, captureRelay, activateDoctrine, upgradeBuilding, cancelUpgrade, scoreOperation } from '../design-preview/demo/operation.js';
-import { LocalArchive } from '../design-preview/demo/local-archive.js';
-import { FrameMonitor, FrameAttribution, FrameCadence } from '../design-preview/demo/frame-monitor.js';
-import { RenderProfiler } from '../design-preview/servers/render-profiler.js';
-import { unitCallouts, buildingHealth, placeBuildingHealth } from '../design-preview/demo/battlefield-hud.js';
-import { openingChecklist, suggestedRaid, operationGuide } from '../design-preview/demo/opening-guide.js';
-import * as T from '../design-preview/vendor/three/three.module.js';
-import { parkHiddenMatrices } from '../design-preview/servers/visible-matrices.js';
+import { createGame, spawn, tickGame, deploy, launchRaid, command, compute, holdPosition, point, ROLES, ability } from '../game/demo/engine.js';
+import { createOperation, activateEconomy, directOperation, tickOperation, captureRelay, activateDoctrine, upgradeBuilding, cancelUpgrade, scoreOperation } from '../game/demo/operation.js';
+import { LocalArchive } from '../game/demo/local-archive.js';
+import { FrameMonitor, FrameAttribution, FrameCadence } from '../game/demo/frame-monitor.js';
+import { RenderProfiler } from '../game/servers/render-profiler.js';
+import { unitCallouts, buildingHealth, placeBuildingHealth } from '../game/demo/battlefield-hud.js';
+import { openingChecklist, suggestedRaid, operationGuide } from '../game/demo/opening-guide.js';
+import * as T from '../game/vendor/three/three.module.js';
+import { parkHiddenMatrices } from '../game/servers/visible-matrices.js';
 
 const tests = [], check = (name, fn) => { fn(); tests.push(name); };
 const factions = ['misanthropic', 'closed', 'broke'];

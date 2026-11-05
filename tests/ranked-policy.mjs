@@ -1,7 +1,7 @@
 // Test-only legal commander. Policy bookkeeping stays outside the game state.
-import {kit,unitType,abilityProblem} from '../design-preview/demo/faction-rules.js';
-import {compute,ROLES,distance} from '../design-preview/demo/engine.js';
-import {tree,nodeInfo,branchAt,techCost} from '../design-preview/demo/faction-tech.js';
+import {kit,unitType,abilityProblem} from '../game/demo/faction-rules.js';
+import {compute,ROLES,distance} from '../game/demo/engine.js';
+import {tree,nodeInfo,branchAt,techCost} from '../game/demo/faction-tech.js';
 function infrastructure(g,issue){
  const s=g.infrastructure[g.faction];if(s.project?.type==='research'&&(s.buildings[s.project.site].hp<=0||nodeInfo(g.faction,s.project.id).tier===3&&Object.values(s.buildings).filter(b=>b.hp>0).length<2))issue({type:'cancelProject'});if(s.project||g.time<12)return;
  const b=tree(g.faction).branches,broken=Object.entries(s.buildings).find(([,v])=>v.built&&v.hp<=0);if(broken){issue({type:'project',id:branchAt(g.faction,broken[0]).id});return;}

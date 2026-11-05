@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {createModelCache,MODEL_CACHE} from '../design-preview/servers/model-cache.js';
+import {createModelCache,MODEL_CACHE} from '../game/servers/model-cache.js';
 const bytes=new TextEncoder().encode('complete model bytes'),hash=b=>createHash('sha256').update(b).digest('hex');
 const assets={'model.glb':{bytes:bytes.length,sha256:hash(bytes)}},base='https://game.invalid/r/old/servers/assets/';
 const key='https://game.invalid/__hi-model-cache/v1/'+hash(bytes);

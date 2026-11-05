@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import * as T from '../design-preview/vendor/three/three.module.js';
-import { DrawBatches } from '../design-preview/servers/draw-batches.js';
+import * as T from '../game/vendor/three/three.module.js';
+import { DrawBatches } from '../game/servers/draw-batches.js';
 
 const scene=new T.Scene(),root=new T.Group(),geometry=new T.BoxGeometry(1,2,3),material=new T.MeshStandardMaterial();scene.add(root);
 const originals=Object.fromEntries(Object.entries(geometry.attributes).map(([name,a])=>[name,a.array.slice()])),indices=geometry.index.array.slice();

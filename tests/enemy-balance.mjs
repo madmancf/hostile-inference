@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {createOperation,directOperation,tickOperation,activateEconomy} from '../design-preview/demo/operation.js';
-import {LocalArchive} from '../design-preview/demo/local-archive.js';
+import {createOperation,directOperation,tickOperation,activateEconomy} from '../game/demo/operation.js';
+import {LocalArchive} from '../game/demo/local-archive.js';
 const factions=['misanthropic','closed','broke'],matches=[],idle=[],checkpoints=[];
 for(const difficulty of ['standard','relaxed'])for(const faction of factions)for(const rival of factions.filter(f=>f!==faction)){
  const g=createOperation(faction,rival,difficulty);let minimumCash=Infinity,maxHeat=0,maxField=0,firstRaid=null,firstBuild=null,peakUsed=0;
@@ -15,6 +15,6 @@ for(const difficulty of ['standard','relaxed'])for(const faction of factions)for
  matches.push(row);console.log(JSON.stringify(row));assert.ok(g.time<=900);assert.ok(minimumCash>=0);assert.ok(maxField<=20);assert.equal(g.result,'victory',faction+' vs '+rival+' '+difficulty);
 }
 for(const rival of factions){const g=createOperation(rival==='broke'?'closed':'broke',rival);activateEconomy(g);while(!g.result)tickOperation(g,.05);assert.equal(g.result,'defeat','An idle base must fall to a sustained invasion');assert.ok(g.operation.attacks>0);idle.push({rival,outcome:g.result,time:Math.round(g.time),home:Math.round(g.campus),raids:g.operation.attacks,research:g.infrastructure[rival].completed});}
-const paths=['design-preview/demo/enemy-ai.js','design-preview/demo/engine.js','design-preview/demo/faction-tech.js','design-preview/demo/faction-rules.js','design-preview/demo/operation.js'];const sourceSHA256=Object.fromEntries(await Promise.all(paths.map(async p=>[p,createHash('sha256').update(await fs.readFile(p)).digest('hex')])));
+const paths=['game/demo/enemy-ai.js','game/demo/engine.js','game/demo/faction-tech.js','game/demo/faction-rules.js','game/demo/operation.js'];const sourceSHA256=Object.fromEntries(await Promise.all(paths.map(async p=>[p,createHash('sha256').update(await fs.readFile(p)).digest('hex')])));
 await fs.writeFile('output/playwright/enemy-ai-balance-v0.11.json',JSON.stringify({status:'passed',at:new Date().toISOString(),scope:'Deterministic paid-command simulation, not human balance approval or FPS certification',matches,idle,sourceSHA256},null,2)+'\n');
 await fs.writeFile('output/playwright/enemy-ai-checkpoints-v0.11.json',JSON.stringify(checkpoints)+'\n');

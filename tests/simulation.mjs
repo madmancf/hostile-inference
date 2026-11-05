@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createLab,measure,setAllocation,triggerIncident,buyUpgrade,startTraining,cancelTraining,tick,advance,status } from '../design-preview/v2/simulation.js';
+import { createLab,measure,setAllocation,triggerIncident,buyUpgrade,startTraining,cancelTraining,tick,advance,status } from '../game/v2/simulation.js';
 
 let count=0;
 const check=(name,fn)=>{fn();count++;console.log('PASS '+name)};

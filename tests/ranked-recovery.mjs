@@ -1,6 +1,6 @@
 const output=process.env.HI_RANKED_OUTPUT||'output/playwright/ranked-current';
 import assert from 'node:assert/strict';import fs from 'node:fs/promises';import os from 'node:os';import path from 'node:path';
-import {RankedService} from '../api/ranked-service.mjs';import {replay,stateDigest} from '../design-preview/demo/ranked-protocol.js';
+import {RankedService} from '../api/ranked-service.mjs';import {replay,stateDigest} from '../game/demo/ranked-protocol.js';
 const directory=await fs.mkdtemp(path.join(os.tmpdir(),'hi-ranked-recovery-'));let now=Date.now(),service=await new RankedService({directory,now:()=>now}).init();
 const config={faction:'closed',rival:'broke',difficulty:'standard'},checks=[];
 const wait=async t=>{for(let i=0;i<300;i++){const m=service.get(t.id,t.token);if(['verified','rejected'].includes(m.status))return m;now+=50;await new Promise(r=>setTimeout(r,50));}throw Error('Verification timeout');};

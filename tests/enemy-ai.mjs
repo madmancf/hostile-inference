@@ -1,12 +1,12 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
-import {createOperation,activateEconomy,directOperation,tickOperation} from '../design-preview/demo/operation.js';
-import {spawn,command,point,compute} from '../design-preview/demo/engine.js';
-import {unitType,castFactionAbility,abilityProblem,linked} from '../design-preview/demo/faction-rules.js';
-import {initEnemyAI,queueEnemy,enemyCapacity,enemyEconomy,tickEnemyAI,chooseEnemyProject,chooseSpecialization,validEnemyAI} from '../design-preview/demo/enemy-ai.js';
-import {tree,startProject,damageFacility,techBonuses,techCost,techCompute} from '../design-preview/demo/faction-tech.js';
-import {LocalArchive} from '../design-preview/demo/local-archive.js';
+import {createOperation,activateEconomy,directOperation,tickOperation} from '../game/demo/operation.js';
+import {spawn,command,point,compute} from '../game/demo/engine.js';
+import {unitType,castFactionAbility,abilityProblem,linked} from '../game/demo/faction-rules.js';
+import {initEnemyAI,queueEnemy,enemyCapacity,enemyEconomy,tickEnemyAI,chooseEnemyProject,chooseSpecialization,validEnemyAI} from '../game/demo/enemy-ai.js';
+import {tree,startProject,damageFacility,techBonuses,techCost,techCompute} from '../game/demo/faction-tech.js';
+import {LocalArchive} from '../game/demo/local-archive.js';
 const checks=[],check=(name,fn)=>{fn();checks.push(name);console.log('PASS '+name);};
 const factions=['misanthropic','closed','broke'];
 const memory=()=>{const data=new Map();return {getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v),removeItem:k=>data.delete(k),data};};
@@ -67,6 +67,6 @@ check('Paused and completed operations cannot run AI or charge for units',()=>{c
 const development=[];
 for(const rival of factions){const g=createOperation(rival==='broke'?'closed':'broke',rival);g.operation.nextAttack=5000;advance(g,720);assert.equal(Object.values(g.infrastructure[rival].buildings).filter(b=>b.built).length,3);assert.equal(g.infrastructure[rival].completed.length,4);assert.ok(g.infrastructure[rival].specialization);assert.ok(g.operation.enemyAI.deliveries>=10);assert.ok(g.operation.enemyAI.decisions<=721);assert.ok(validEnemyAI(g.operation));development.push({rival,buildings:3,research:g.infrastructure[rival].completed,deliveries:g.operation.enemyAI.deliveries,produced:g.operation.enemyAI.produced});}
 checks.push('Every uncontested faction builds all three facilities, researches all three branches and commits to one exclusive specialization');
-const files=['design-preview/demo/enemy-ai.js','design-preview/demo/operation.js','design-preview/demo/faction-rules.js','design-preview/demo/faction-tech.js','design-preview/demo/engine.js','design-preview/demo/local-archive.js'];
+const files=['game/demo/enemy-ai.js','game/demo/operation.js','game/demo/faction-rules.js','game/demo/faction-tech.js','game/demo/engine.js','game/demo/local-archive.js'];
 const hashes=Object.fromEntries(await Promise.all(files.map(async p=>[p,createHash('sha256').update(await fs.readFile(p)).digest('hex')])));
 await fs.writeFile('output/playwright/enemy-ai-mechanics-v0.11.json',JSON.stringify({status:'passed',at:new Date().toISOString(),checks,development,sourceSHA256:hashes},null,2)+'\n');console.log(JSON.stringify({status:'passed',checks:checks.length,development}));

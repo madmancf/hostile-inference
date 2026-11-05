@@ -5,8 +5,8 @@ import path from 'node:path';
 import {Worker} from 'node:worker_threads';
 import {Accounts} from '../api/accounts.mjs';
 import {RankedService} from '../api/ranked-service.mjs';
-import {createRankedGame,applyAction,stateDigest,replay} from '../design-preview/demo/ranked-protocol.js';
-import {tickOperation} from '../design-preview/demo/operation.js';
+import {createRankedGame,applyAction,stateDigest,replay} from '../game/demo/ranked-protocol.js';
+import {tickOperation} from '../game/demo/operation.js';
 import {drive} from './ranked-policy.mjs';
 import {leaderboardSnapshot} from '../api/leaderboards.mjs';
 

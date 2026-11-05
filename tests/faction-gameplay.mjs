@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
-import { createGame,spawn,ability,command,tickGame,point,compute,deploy,launchRaid } from '../design-preview/demo/engine.js';
-import { kit,unitType,updateFactionState,warded,linked,attackPower,receiveDamage,castFactionAbility,onHit } from '../design-preview/demo/faction-rules.js';
-import { createOperation,directOperation,tickOperation,activateEconomy } from '../design-preview/demo/operation.js';
-import { LocalArchive } from '../design-preview/demo/local-archive.js';
+import { createGame,spawn,ability,command,tickGame,point,compute,deploy,launchRaid } from '../game/demo/engine.js';
+import { kit,unitType,updateFactionState,warded,linked,attackPower,receiveDamage,castFactionAbility,onHit } from '../game/demo/faction-rules.js';
+import { createOperation,directOperation,tickOperation,activateEconomy } from '../game/demo/operation.js';
+import { LocalArchive } from '../game/demo/local-archive.js';
 const tests=[],test=(name,fn)=>{fn();tests.push(name);},factions=['misanthropic','closed','broke'];
 function arena(faction){const g=createGame(faction);g.units=[];g.nextWave=Infinity;g.preview=true;g.funds=5000;return g;}
 function at(u,x=800,y=400){Object.assign(u,{x,y,path:[],arrival:null});return u;}

@@ -6,7 +6,9 @@ import {rulesManifest} from '../api/ranked-rules.mjs';
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const label='com.hostile-inference.preview';
-const server=path.join(root,'design-preview/server.mjs');
+const server=path.join(root,'game/server.mjs');
+// An existing local installation may still have its original launchd path.
+const legacyServer=path.join(root,'design-preview/server.mjs');
 const runtime=path.join(root,'.runtime');
 const url='http://127.0.0.1:4178/demo/index.html';
 if(process.platform!=='darwin')throw new Error('The managed preview starter uses macOS launchd. Use npm run dev on other platforms.');
@@ -23,7 +25,7 @@ async function stopJob(info){
  throw new Error('Previous preview has not stopped yet. Retry npm start shortly.');
 }
 let existing=job();
-if(existing&&!existing.includes(server))throw new Error('The preview service label is owned by a different checkout.');
+if(existing&&!existing.includes(server)&&!existing.includes(legacyServer))throw new Error('The preview service label is owned by a different checkout.');
 if(process.argv.includes('--stop')){
  if(existing)await stopJob(existing);
  console.log('Managed preview stopped.');

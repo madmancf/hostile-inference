@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import {createHash} from 'node:crypto';
-import {factionAssetKit as kit} from '../design-preview/servers/live-world.js';
-import {buildFactionMachine,buildFactionBuilding,outfitFactionPerson} from '../design-preview/servers/faction-assets.js';
-import {DrawBatches} from '../design-preview/servers/draw-batches.js';
+import {factionAssetKit as kit} from '../game/servers/live-world.js';
+import {buildFactionMachine,buildFactionBuilding,outfitFactionPerson} from '../game/servers/faction-assets.js';
+import {DrawBatches} from '../game/servers/draw-batches.js';
 const {T}=kit,factions=['misanthropic','closed','broke'],roles=['harvester','model','firewall','malware','cooler','cloud'],buildings=['lab','grid','gate','intake','dock','annex'];
 // All surfaces deliberately use the same material: fingerprints cannot pass on palette changes.
 const gray=new T.MeshStandardMaterial({color:'#808080'}),materials=Object.fromEntries(['paper','accent','dark','metal','glow'].map(k=>[k,gray]));

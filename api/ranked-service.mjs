@@ -5,7 +5,7 @@ import {readFileSync} from 'node:fs';
 import path from 'node:path';
 import {createHash,randomBytes,randomUUID,timingSafeEqual} from 'node:crypto';
 import {Worker} from 'node:worker_threads';
-import {PROTOCOL,MAX_TICKS,MAX_ACTIONS,MAX_BATCH_ACTIONS,validateConfig,validateAction,exact,integer} from '../design-preview/demo/ranked-protocol.js';
+import {PROTOCOL,MAX_TICKS,MAX_ACTIONS,MAX_BATCH_ACTIONS,validateConfig,validateAction,exact,integer} from '../game/demo/ranked-protocol.js';
 import {rulesManifest,defaultDataDirectory} from './ranked-rules.mjs';
 import {cookieToken,ACCOUNT_VERSION,SEASON} from './accounts.mjs';
 

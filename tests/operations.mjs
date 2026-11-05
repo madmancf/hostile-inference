@@ -12,8 +12,8 @@ import {RankedService} from '../api/ranked-service.mjs';
 import {createBackup,verifyBackup,restoreBackup,startOperations,checkUpdate} from '../api/operations.mjs';
 import {RULE_FILES} from '../api/ranked-rules.mjs';
 import {leaderboardSnapshot} from '../api/leaderboards.mjs';
-import {replay,stateDigest,createRankedGame,applyAction} from '../design-preview/demo/ranked-protocol.js';
-import {tickOperation} from '../design-preview/demo/operation.js';
+import {replay,stateDigest,createRankedGame,applyAction} from '../game/demo/ranked-protocol.js';
+import {tickOperation} from '../game/demo/operation.js';
 import {drive} from './ranked-policy.mjs';
 import {Worker} from 'node:worker_threads';
 
@@ -63,9 +63,19 @@ try{
  });
  await test('Update preflight requires drained jobs, compatible operations, intact bundles and identical season rules',async()=>{
   const candidate=path.join(dir,'candidate');await fs.mkdir(path.join(candidate,'public'),{recursive:true});await fs.writeFile(path.join(candidate,'public/test.js'),'export {};');const sha=b=>createHash('sha256').update(b).digest('hex'),privateSHA256={};
-  for(const name of ['server.mjs','api/replay-worker.mjs',...RULE_FILES.map(f=>'design-preview/'+f)]){const bytes=Buffer.from(name.startsWith('design-preview/')?await fs.readFile(path.join(root,name)):name);const file=path.join(candidate,name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);privateSHA256[name]=sha(bytes);}
+  for(const name of ['server.mjs','api/replay-worker.mjs',...RULE_FILES.map(f=>'game/'+f)]){const bytes=Buffer.from(name.startsWith('game/')?await fs.readFile(path.join(root,name)):name);const file=path.join(candidate,name);await fs.mkdir(path.dirname(file),{recursive:true});await fs.writeFile(file,bytes);privateSHA256[name]=sha(bytes);}
   const manifest={id:'test-candidate',operationsVersion:1,storageSchema:4,rules:ranked.rules.id,assets:{'test.js':{bytes:10,sha256:sha('export {};')}},privateSHA256};await fs.writeFile(path.join(candidate,'manifest.json'),JSON.stringify(manifest));
   await ranked.setAdmission('open');await assert.rejects(()=>checkUpdate(ranked,candidate),/Drain/);await ranked.setAdmission('draining');assert.equal((await checkUpdate(ranked,candidate)).ready,true);
+  // A retained bundle can still be used for rollback after the source move.
+  const legacy=path.join(dir,'legacy-candidate');await fs.cp(candidate,legacy,{recursive:true});await fs.rename(path.join(legacy,'game'),path.join(legacy,'design-preview'));
+  const oldManifest={...manifest,privateSHA256:Object.fromEntries(Object.entries(privateSHA256).map(([name,digest])=>[name.replace(/^game\//,'design-preview/'),digest]))};
+  await fs.writeFile(path.join(legacy,'manifest.json'),JSON.stringify(oldManifest));assert.equal((await checkUpdate(ranked,legacy)).ready,true);
+  // Mixed packages must not conceal a second rule tree with different bytes.
+  await fs.cp(path.join(legacy,'design-preview'),path.join(candidate,'design-preview'),{recursive:true});Object.assign(manifest.privateSHA256,oldManifest.privateSHA256);
+  await fs.writeFile(path.join(candidate,'manifest.json'),JSON.stringify(manifest));assert.equal((await checkUpdate(ranked,candidate)).ready,true);
+  const corrupted='design-preview/'+RULE_FILES[0];await fs.writeFile(path.join(candidate,corrupted),'different rules');manifest.privateSHA256[corrupted]=sha('different rules');
+  await fs.writeFile(path.join(candidate,'manifest.json'),JSON.stringify(manifest));await assert.rejects(()=>checkUpdate(ranked,candidate),/frozen/);
+  const original=await fs.readFile(path.join(root,'game',RULE_FILES[0]));await fs.writeFile(path.join(candidate,corrupted),original);manifest.privateSHA256[corrupted]=sha(original);
   manifest.rules='0'.repeat(64);await fs.writeFile(path.join(candidate,'manifest.json'),JSON.stringify(manifest));await assert.rejects(()=>checkUpdate(ranked,candidate),/frozen/);manifest.rules=ranked.rules.id;delete manifest.operationsVersion;await fs.writeFile(path.join(candidate,'manifest.json'),JSON.stringify(manifest));await assert.rejects(()=>checkUpdate(ranked,candidate),/unsupported/);manifest.operationsVersion=1;await fs.writeFile(path.join(candidate,'manifest.json'),JSON.stringify(manifest));await fs.writeFile(path.join(candidate,'public/test.js'),'tampered');await assert.rejects(()=>checkUpdate(ranked,candidate),/asset mismatch/);
  });
  await test('Hard process kill releases the storage lock and recovers a persisted running verification',async()=>{

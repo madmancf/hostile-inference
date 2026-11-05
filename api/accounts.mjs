@@ -9,7 +9,7 @@ import {fileURLToPath} from 'node:url';
 import {DatabaseSync} from 'node:sqlite';
 import {randomBytes,randomUUID,createHash,scrypt as derive,timingSafeEqual} from 'node:crypto';
 import {promisify} from 'node:util';
-import {exact,FACTION_IDS} from '../design-preview/demo/ranked-protocol.js';
+import {exact,FACTION_IDS} from '../game/demo/ranked-protocol.js';
 
 export const ACCOUNT_VERSION=1,SEASON='local-season-zero',COOKIE='hi_session';
 const DAY=86400000,scrypt=promisify(derive),sha=value=>createHash('sha256').update(value).digest('hex');
