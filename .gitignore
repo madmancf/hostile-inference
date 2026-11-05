@@ -24,12 +24,15 @@
 !/game/**/*.mjs
 !/game/**/*.html
 !/game/**/*.css
+!/game/README.md
 !/game/demo/favicon.svg
 !/game/vendor/three/LICENSE
 !/game/vendor/meshoptimizer-LICENSE.md
 !/game/servers/assets/premium-models.json
 
 /scripts/*
+!/scripts/README.md
+!/scripts/doctor.mjs
 !/scripts/check-source.mjs
 !/scripts/test-source.mjs
 !/scripts/check-assets.mjs
@@ -40,6 +43,8 @@
 !/scripts/operate.mjs
 
 /tests/*
+!/tests/README.md
+!/tests/doctor.mjs
 !/tests/simulation.mjs
 !/tests/demo.mjs
 !/tests/servers.mjs
@@ -72,6 +77,7 @@
 !/tests/release.mjs
 
 /docs/*
+!/docs/README.md
 !/docs/THIRD_PARTY_NOTICES.md
 !/docs/LOCAL_DEVELOPMENT.md
 !/docs/ARCHITECTURE.md
