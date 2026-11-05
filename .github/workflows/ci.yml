@@ -44,6 +44,22 @@ jobs:
           cache: npm
       - run: npm ci --ignore-scripts
       - run: npx playwright install --with-deps chromium
+      - name: Allow the bundled browser to create its sandbox
+        # Ubuntu restricts user namespaces for downloaded browser binaries.
+        # Grant only this executable access, on this disposable runner; keep
+        # Chromium's sandbox and the host-wide AppArmor restriction enabled.
+        run: |
+          browser_path="$(node --input-type=module -e 'import {chromium} from "playwright"; process.stdout.write(chromium.executablePath())')"
+          test -x "$browser_path"
+          printf 'HI_BROWSER_EXECUTABLE=%s\n' "$browser_path" >> "$GITHUB_ENV"
+          sudo tee /etc/apparmor.d/hostile-inference-chromium >/dev/null <<EOF
+          abi <abi/4.0>,
+          include <tunables/global>
+          profile hostile-inference-chromium "$browser_path" flags=(unconfined) {
+            userns,
+          }
+          EOF
+          sudo apparmor_parser -r /etc/apparmor.d/hostile-inference-chromium
       - run: npm run check:assets
       - run: npm run test:browser
         env:

@@ -23,6 +23,11 @@ temporary server state. `HI_BROWSER_EXECUTABLE` can select an existing Chrome
 for Testing binary. The normal macOS Google Chrome application is forbidden.
 All owned processes, contexts and temporary account data close on completion.
 
+Chromium sandboxing stays enabled. On disposable Ubuntu CI runners, the workflow
+installs an AppArmor user-namespace profile for the exact bundled browser binary,
+following [Chromium's guidance](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/docs/security/apparmor-userns-restrictions.md).
+It does not disable the host-wide restriction or modify a contributor's machine.
+
 `npm run dev:server` starts the loopback development server without requiring
 art; account and leaderboard pages work. Without art, entry and game routes show
 an explicit contributor workspace. The default browser check forces that mode
