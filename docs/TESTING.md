@@ -27,6 +27,10 @@ Chromium sandboxing stays enabled. On disposable Ubuntu CI runners, the workflow
 installs an AppArmor user-namespace profile for the exact bundled browser binary,
 following [Chromium's guidance](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/docs/security/apparmor-userns-restrictions.md).
 It does not disable the host-wide restriction or modify a contributor's machine.
+The GPU-less runner uses `HI_BROWSER_SOFTWARE_GPU=1` to select Chromium's
+[SwiftShader driver](https://chromium.googlesource.com/chromium/src/+/refs/heads/main/docs/gpu/swiftshader.md)
+and a longer startup timeout. The game retains the same textures, geometry,
+shadow/reflection sizes and effects. Software rendering is not FPS evidence.
 
 `npm run dev:server` starts the loopback development server without requiring
 art; account and leaderboard pages work. Without art, entry and game routes show

@@ -64,3 +64,4 @@ jobs:
       - run: npm run test:browser
         env:
           HI_BROWSER_GAME: "1"
+          HI_BROWSER_SOFTWARE_GPU: "1"

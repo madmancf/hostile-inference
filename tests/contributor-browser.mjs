@@ -10,6 +10,7 @@ import {chromium} from 'playwright';
 import {fileURLToPath} from 'node:url';
 process.chdir(fileURLToPath(new URL('../',import.meta.url)));
 const executablePath=process.env.HI_BROWSER_EXECUTABLE;
+const softwareGPU=process.env.HI_BROWSER_SOFTWARE_GPU==='1';
 if(executablePath&&/Google Chrome\.app(?:\/|$)/.test(executablePath))throw Error('Use bundled Chromium or Chrome for Testing, never normal Chrome');
 const game=process.env.HI_BROWSER_GAME==='1',tmp=await fs.mkdtemp(path.join(os.tmpdir(),'hi-contributor-'));
 // Complete public clones include art. Force the source-only fallback separately
@@ -28,7 +29,9 @@ const stopServer=async()=>{
 const stop=async()=>{await browser?.close().catch(()=>{});await stopServer();};
 for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{interrupted=true;void stop();});
 try{
-  browser=await chromium.launch({headless:true,chromiumSandbox:true,...(executablePath?{executablePath}:{})});
+  browser=await chromium.launch({headless:true,chromiumSandbox:true,
+    ...(softwareGPU?{args:['--use-gl=angle','--use-angle=swiftshader']}:{}),
+    ...(executablePath?{executablePath}:{})});
   // Exercise the art-free contributor experience even on full installations.
   // Both modes reuse this one browser and separate disposable server data.
   for(const fullGame of game?[false,true]:[false]){
@@ -47,6 +50,7 @@ try{
     try{
       const page=await context.newPage();page.setDefaultTimeout(15000);
       page.on('pageerror',error=>report.errors.push({faction,message:error.message}));
+      page.on('console',message=>{if(message.type()==='error'&&message.text().includes('THREE.'))report.errors.push({faction,message:message.text().slice(0,1000)});});
       page.on('response',response=>{
         const url=new URL(response.url());
         if(url.origin===base&&(response.status()>=500||response.status()>=400&&!url.pathname.startsWith('/api/')))
@@ -105,7 +109,14 @@ try{
       let graphics;
       if(fullGame){
         await page.goto(base+'/demo/index.html?faction='+faction+'&tutorial=1');
-        await page.locator('#loading').waitFor({state:'hidden',timeout:90000});
+        // A caught loader error is displayed in-page, not emitted as pageerror.
+        // Report it immediately rather than hiding the cause behind a timeout.
+        const loadTimeout=softwareGPU?180000:90000;
+        await Promise.race([
+          page.locator('#loading').waitFor({state:'hidden',timeout:loadTimeout}),
+          page.locator('#loading-retry').waitFor({state:'visible',timeout:loadTimeout})
+            .then(async()=>{throw Error(await page.locator('#loading').innerText());})
+        ]);
         await page.locator('#tutorial-panel').waitFor({state:'visible'});
         assert.equal(await page.locator('#lab-name').textContent(),name);
         await page.locator('#lesson-action').click();
@@ -120,7 +131,7 @@ try{
   await stopServer();
   }
   assert.deepEqual(report.errors,[]);assert.deepEqual(report.resourceErrors,[]);report.status='passed';
-}catch(error){report.status='failed';report.error=error.message;throw error;}
+}catch(error){report.status='failed';report.error=error.message;console.error(JSON.stringify({error:report.error,pageErrors:report.errors,resourceErrors:report.resourceErrors}));throw error;}
 finally{
   await stop();await fs.rm(tmp,{recursive:true,force:true});
   await fs.mkdir('output/playwright/open-source',{recursive:true});
