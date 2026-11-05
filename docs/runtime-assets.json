@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "scope": "Excluded external art, full-quality runtime fingerprints only; no redistribution grant",
+  "scope": "Full-quality runtime art distributed under docs/ASSET_LICENSE.md; code remains MIT",
   "assets": {
     "game/entry/assets/broke.webp": {
       "bytes": 325104,

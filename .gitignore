@@ -17,7 +17,7 @@
 !/tests/
 !/docs/
 
-# Only source and independently licensed vendor code from the preview tree.
+# Source, vendor code and the explicitly reviewed runtime art pack.
 /game/**
 !/game/**/
 !/game/**/*.js
@@ -29,6 +29,47 @@
 !/game/vendor/three/LICENSE
 !/game/vendor/meshoptimizer-LICENSE.md
 !/game/servers/assets/premium-models.json
+
+# Reviewed runtime art only. Masters and private provenance remain excluded.
+!/game/entry/assets/broke.webp
+!/game/entry/assets/closed.webp
+!/game/entry/assets/misanthropic.webp
+!/game/servers/assets/agent-field-v1.glb
+!/game/servers/assets/agent-idle-clip-v1.glb
+!/game/servers/assets/agent-walk-web-v1.glb
+!/game/servers/assets/broke-hq-web-v1.glb
+!/game/servers/assets/broke-server-v1.png
+!/game/servers/assets/closed-hq-web-v1.glb
+!/game/servers/assets/closed-server-v1.png
+!/game/servers/assets/misanthropic-hq-web-v1.glb
+!/game/servers/assets/misanthropic-server-v1.png
+!/game/servers/assets/portraits/broke-agent-v06.jpg
+!/game/servers/assets/portraits/broke-cloud-v06.jpg
+!/game/servers/assets/portraits/broke-cooler-v06.jpg
+!/game/servers/assets/portraits/broke-firewall-v06.jpg
+!/game/servers/assets/portraits/broke-harvester-v06.jpg
+!/game/servers/assets/portraits/broke-malware-v06.jpg
+!/game/servers/assets/portraits/broke-model-v06.jpg
+!/game/servers/assets/portraits/broke-researcher-v06.jpg
+!/game/servers/assets/portraits/closed-agent-v06.jpg
+!/game/servers/assets/portraits/closed-cloud-v06.jpg
+!/game/servers/assets/portraits/closed-cooler-v06.jpg
+!/game/servers/assets/portraits/closed-firewall-v06.jpg
+!/game/servers/assets/portraits/closed-harvester-v06.jpg
+!/game/servers/assets/portraits/closed-malware-v06.jpg
+!/game/servers/assets/portraits/closed-model-v06.jpg
+!/game/servers/assets/portraits/closed-researcher-v06.jpg
+!/game/servers/assets/portraits/misanthropic-agent-v06.jpg
+!/game/servers/assets/portraits/misanthropic-cloud-v06.jpg
+!/game/servers/assets/portraits/misanthropic-cooler-v06.jpg
+!/game/servers/assets/portraits/misanthropic-firewall-v06.jpg
+!/game/servers/assets/portraits/misanthropic-harvester-v06.jpg
+!/game/servers/assets/portraits/misanthropic-malware-v06.jpg
+!/game/servers/assets/portraits/misanthropic-model-v06.jpg
+!/game/servers/assets/portraits/misanthropic-researcher-v06.jpg
+!/game/servers/assets/researcher-field-v1.glb
+!/game/servers/assets/researcher-idle-clip-v1.glb
+!/game/servers/assets/researcher-walk-web-v1.glb
 
 /scripts/*
 !/scripts/README.md
@@ -74,6 +115,7 @@
 !/tests/capacity-soak.mjs
 !/tests/contributor-browser.mjs
 !/tests/public-source.mjs
+!/tests/public-assets.mjs
 !/tests/release.mjs
 
 /docs/*
@@ -82,6 +124,7 @@
 !/docs/LOCAL_DEVELOPMENT.md
 !/docs/ARCHITECTURE.md
 !/docs/ASSETS.md
+!/docs/ASSET_LICENSE.md
 !/docs/ROADMAP.md
 !/docs/STATUS.md
 !/docs/TESTING.md
