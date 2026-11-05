@@ -64,7 +64,7 @@ try{
       assert.equal(await page.locator('#membership-name').textContent(),name);
       await page.locator('#account-leaderboard').click();await page.locator('#boards').waitFor({state:'visible'});
       assert.equal(await page.locator('#my-score').textContent(),'0');
-      assert.equal(await page.locator('#my-contribution').textContent(),'0');
+      assert.equal(Number(await page.locator('#my-contribution').textContent()),0);
       for(const width of [390,1366]){
         await page.setViewportSize({width,height:900});
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Standings fit at '+width);
