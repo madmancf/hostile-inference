@@ -46,3 +46,24 @@ checks does not constitute human gameplay or artistic approval.
 
 Use concise commit subjects that describe the change. Put verification details
 in the PR description; omit agent narration and implementation status from titles.
+
+## Starting and handing off a task
+
+1. Run `git status --short` and read the README in the component you will change:
+   [game](game/README.md), [API](api/README.md), [tests](tests/README.md),
+   [scripts](scripts/README.md), or [release](release/README.md).
+2. State the observable acceptance condition. For a bug, capture a failing case
+   before editing. Use `npm run doctor` to check a new checkout without starting
+   services or reading private account data.
+3. Keep each commit focused on one behavior or documentation area. Name that
+   change concretely. Folder-row labels on GitHub are last-commit subjects, not
+   custom descriptions; never add empty commits or meaningless edits for labels.
+4. Inspect `git diff --cached` before committing. A new public file may need an
+   explicit `.gitignore` exception; use `git check-ignore -v PATH` to diagnose it.
+   Preserve unrelated working changes and never force-add private output.
+5. Hand off the changed paths, the acceptance condition, commands actually run,
+   results, and remaining limitations. Label a proposal as a proposal. Link to
+   the commit and concise evidence; leave raw test accounts and reports private.
+
+`npm run verify` runs source syntax, public-tree checks and the source suite.
+See [the test map](tests/README.md) for additional checks required by your change.
