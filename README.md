@@ -44,7 +44,8 @@ Use **Node 24 or 26** on Linux or macOS; use WSL2 on Windows.
 git clone https://github.com/madmancf/hostile-inference.git
 cd hostile-inference
 npm ci
-npm test
+npm run doctor
+npm run verify
 ```
 
 Pick a focused task from the [roadmap](docs/ROADMAP.md), read the
@@ -53,18 +54,22 @@ should start with [AGENTS.md](AGENTS.md). All contributions receive maintainer r
 
 For development setup, read [Running on your own computer](docs/LOCAL_DEVELOPMENT.md).
 
+The doctor reports prerequisites and optional art availability without starting
+services. The source verification command needs no private art or credentials.
+Choose additional checks from the [test map](tests/README.md) for your change.
+
 
 ## Find your way around
 
 | Directory | What's inside |
 | --- | --- |
-| `game/` | Browser interface, simulation, renderer and faction systems |
-| `api/` | Accounts, command recording, verification and leaderboards |
-| `tests/` | Gameplay, persistence, security and background browser checks |
-| `release/` | Production server and runtime manifest |
-| `scripts/` | Development, validation, packaging and operator commands |
-| `docs/` | Architecture, setup, assets and operating guides |
-| `.github/` | Contribution policies, issue/PR templates and CI |
+| [game](game/README.md) | Browser interface, simulation, renderer and faction systems |
+| [api](api/README.md) | Accounts, command recording, verification and leaderboards |
+| [tests](tests/README.md) | Choose regression coverage for the behavior you change |
+| [release](release/README.md) | Immutable packages, runtime settings and safe updates |
+| [scripts](scripts/README.md) | Development, validation and private operator commands |
+| [docs](docs/README.md) | Setup, architecture, asset scope and release status |
+| [.github](.github/README.md) | Pull-request evidence, review expectations and CI |
 
 ## Development status
 
