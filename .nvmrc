@@ -1,1 +1,4 @@
 24
+# Default contributor runtime: Node 24 LTS, including built-in node:sqlite.
+# Node 26 is also supported and covered by CI; see package.json engines.
+# From this directory, run `nvm install` then `nvm use`.
