@@ -76,7 +76,7 @@ try{
         await page.locator('#tutorial-panel').waitFor({state:'visible'});
         assert.equal(await page.locator('#lab-name').textContent(),name);
         await page.locator('#lesson-action').click();
-        graphics=await page.evaluate(()=>window.hostileDemo.graphics());
+        graphics=await page.evaluate(()=>window.hostileDemo.graphics().quality);
         assert.equal(graphics.shadowSize[0],4096);assert.equal(graphics.reflectionSize[0],2048);
         assert.equal(graphics.aoSamples,32);assert.equal(graphics.bloomStrength,.16);
       }
