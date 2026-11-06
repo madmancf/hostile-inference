@@ -11,6 +11,8 @@ or account credential is needed. `npm ci` installs the lockfile's dependencies.
 | `npm run check:public` | Tracked file/secret/privacy scan and local Markdown links |
 | `npm run test:browser` | Contributor home, missing-art game links, account signup/login/allegiance/history/leaderboard UI for all three factions; fails on page errors and failed local resources |
 | `HI_BROWSER_GAME=1 npm run test:browser` | Adds full-graphics tutorial startup for all factions using the included assets |
+| `HI_BROWSER_GAME=1 HI_BROWSER_FIRST_LIGHT=1 npm run test:browser` | Adds continuous tutorial and operation playthroughs, layout, keyboard and paused resume; virtual-clock functional testing, not FPS certification |
+| `node tests/first-light-profile.mjs` | CPU/storage diagnostic workload and historical save-cost comparison; no graphics certification |
 | `npm run check:assets` | Exact full-quality runtime file fingerprints; missing art is an explicit failure |
 | `npm run test:enemy-balance` | Existing wider balance matrix; one policy, not comprehensive fairness evidence |
 | `npm run test:history` | Archived journal heap growth and indexed private history/retry integrity |

@@ -51,3 +51,34 @@ startup is `HI_BROWSER_GAME=1 npm run test:browser`, in background Chromium.
 Check the entry, tutorial and game at 100% zoom. Keep textures, geometry,
 shadows, reflections and animation intact; report frame pacing separately from
 simulation checks. A startup test does not establish 60 FPS or enjoyable play.
+
+## First Light milestones and recovery
+
+First Light v3 keeps the existing maps, renderer and controls. Its 18 milestones
+cover the original 17 goals: **Defend → Sustain → Breach**. The formation goal is
+split into `formation.open` and `formation.finish`; it counts once, after both.
+Use `tutorialPhase(game)` and `tutorialProgress(game)` for progress. The numeric
+`tutorial.step` is always the named compatibility sentinel `3`, because the
+frozen engine uses lower values for an old resource clamp. Never use it as a
+lesson index or change ranked rules to accommodate the tutorial.
+
+`LocalArchive` owns one whole-state checkpoint outside the game state. The
+controller prepares it before releasing an encounter, before paid campus work,
+and before the rival breach. Retry restores a validated temporary copy while
+paused; it never grants resources on an ordinary chapter transition. An earlier
+viable point remains intact when preparing another fails. Storage denial permits
+session-only play with a warning. A native Web Lock gives only one tab permission
+to write tutorial saves. Browsers without that primitive stay session-only.
+
+The v3 tutorial slot is separate from the original operation/legacy save slot.
+Migration preserves paid state and the exact legacy bytes; independently changed
+saves get an explicit chooser. Later old saves skip the added opening without
+claiming they witnessed its tactic. The original reader cannot overwrite v3.
+See the complete synthetic [paid-state migration example](../tests/fixtures/first-light/migration-example.json)
+and [fixture provenance](../tests/fixtures/first-light/README.md).
+
+Run `node tests/tutorial.mjs` for the action/migration matrix and
+`node tests/first-light-client.mjs` for transport and debrief race checks.
+The [diagnostic catalogue](../docs/LOCAL_DEVELOPMENT.md#first-light-diagnostics)
+explains recovery and safe error reporting. Nothing here changes verified score
+calculation or makes tutorial results eligible for the leaderboard.
