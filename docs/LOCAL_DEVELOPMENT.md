@@ -60,3 +60,65 @@ Run `npm run doctor` for prerequisites and `npm run verify` for source checks.
 See [the test guide](TESTING.md) for isolated background browser coverage.
 Keep `.runtime/`, backups, credentials and test reports out of commits. Never
 point a test harness at an existing player's database.
+
+## First Light diagnostics
+
+First Light saves to `hostile-inference.tutorial-save.v3`. The older
+`hostile-inference.local-save.v1` slot remains available for ordinary operations
+and migration. Do not erase either key to repair a failed migration. When both
+contain independent progress, choose the intended mission in the menu. Resume
+and named retries open paused. Starting training again requires confirmation;
+Cancel preserves the existing progress.
+
+The Mission panel shows the current order and its blocker. The save status is a
+separate persistent message. A named retry restores that checkpoint's units,
+wallet, research, cooldowns and chapter progress; later actions are undone only
+after confirmation. A defeated tutorial retains recovery across reloads.
+
+| Code | Meaning and safe next action |
+| --- | --- |
+| `HI_STORAGE_UNAVAILABLE` | Storage denied or quota exhausted. Keep this tab for session-only recovery; retry saving from Save & menu after fixing browser storage. |
+| `HI_SAVE_TOO_LARGE` | The complete envelope exceeds 600,000 JavaScript characters. Earlier saved bytes remain intact. Keep this session or use its earlier checkpoint. |
+| `HI_SAVE_INVALID` | Damaged or unsupported save. Preserve the bytes; choose another valid save or explicitly start again. |
+| `HI_SAVE_CHOICE` | Two independent missions exist. Select one in the menu. |
+| `HI_SAVE_CHANGED` | Another session changed the save revision. Reload the current saved mission or explicitly replace it. |
+| `HI_SAVE_BUSY` | Another tab owns tutorial saving. Continue unsaved or close that tab and reload this one. |
+| `HI_LOCK_UNAVAILABLE` | Safe cross-tab saving is unavailable in this browser. Training remains session-only. |
+| `HI_MIGRATION_INVALID_STATE` | Post-migration validation failed. Original bytes are intact; do not edit them to bypass validation. |
+| `HI_CHECKPOINT_PREPARE` | A transient snapshot failure. Contact has not been released; one explicit preparation retry is available. |
+| `HI_CHECKPOINT_INVALID` | Invalid, recursive, unaffordable or mismatched recovery state. Keep the earlier valid checkpoint; do not retry unchanged invalid data. |
+| `HI_CHECKPOINT_RESTORE` | Recovery failed before the live-state swap. The live mission is unchanged. |
+| `HI_ORDER_BLOCKED` | A prerequisite is missing. Follow the visible order, use Systems to cancel/refund paid work, or restore a named checkpoint. |
+| `HI_ENCOUNTER_FAILED` | A required unit or demonstration was lost. Use the named training retry; Next never silently passes it. |
+| `HI_ACCOUNT_UNAVAILABLE` | Account lookup failed. Practice remains available. Reopen the menu to retry. |
+| `HI_VERIFY_UNAVAILABLE` | Verification transport failed. Reconnect to recover acknowledged orders; pending results award no points. |
+| `HI_RESPONSE_INVALID` | A service response is malformed or mismatched. Reload/retry; no inferred score is substituted. |
+| `HI_STANDINGS_UNAVAILABLE` | Current contribution is unavailable. Retry standings; the verified result itself is unchanged. |
+| `HI_TRANSITION` | Unexpected local transition/serialization failure. Pause and retain the session for diagnosis. |
+
+A rules/build mismatch gives a reload instruction before admitting a verified
+start. Verification rejection stays rejected and cannot be forced successful.
+Known zero contribution is different from unavailable standings; a null rank
+cannot establish why a result is not counted.
+
+Local diagnostic retention is bounded to 20 records. Error messages never copy
+raw server text, credentials, saves or nested exception causes. Unexpected local
+errors retain at most five sanitized module/line hints. There is no automatic
+upload. The development build exposes read-only diagnostics through
+`hostileDemo.diagnostics()`; the packaged runtime removes that capture global.
+
+The synthetic [migration example](../tests/fixtures/first-light/migration-example.json)
+contains the complete original and migrated records. To reproduce a rejection
+safely, use disposable storage in Node instead of altering a player's browser:
+
+```js
+import {LocalArchive, TUTORIAL_SAVE_KEY} from './game/demo/local-archive.js';
+const bytes = new Map([[TUTORIAL_SAVE_KEY, '{damaged']]);
+const archive = new LocalArchive({
+  getItem: key => bytes.get(key) ?? null,
+  setItem: (key, value) => bytes.set(key, value)
+});
+console.assert(archive.load() === null);
+console.assert(archive.errorCode === 'HI_SAVE_INVALID');
+console.assert(bytes.get(TUTORIAL_SAVE_KEY) === '{damaged');
+```

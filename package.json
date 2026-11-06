@@ -1,8 +1,8 @@
 {
   "name": "hostile-inference",
   "private": true,
-  "version": "0.20.0",
-  "description": "Hostile Inference — animated 3D server-continent RTS",
+  "version": "0.21.0",
+  "description": "Hostile Inference \u2014 animated 3D server-continent RTS",
   "scripts": {
     "start": "node scripts/start-contributor.mjs",
     "dev": "node scripts/start-contributor.mjs",

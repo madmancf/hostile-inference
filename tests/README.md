@@ -40,3 +40,31 @@ Add a source-safe suite to [the runner](../scripts/test-source.mjs) and explicit
 allow its file in `.gitignore`. Keep captures, credentials, provider receipts and
 large generated reports out of Git. The capacity soak is an explicit, lengthy
 operator test; do not add it to routine PR CI by accident.
+
+## First Light v3
+
+- `node tests/tutorial.mjs` drives all 108 legal faction/rival/opening/support/final
+  combinations with real orders and costs. It checks 84 historical serialized
+  saves, paid-state preservation, the old/new storage boundary, recovery,
+  ordinary mistakes, immutable ranked rules and a literal saved-event text sink.
+- `node tests/first-light-client.mjs` checks closed-client callbacks, identical
+  command retries, lost finish acknowledgments, bounded GET retries, malformed
+  responses, obsolete standings requests and explicit zero/unavailable states.
+- `HI_BROWSER_GAME=1 HI_BROWSER_FIRST_LIGHT=1 npm run test:browser` extends the
+  one-process headless runner through full tutorials and ordinary operations,
+  1280×800 / 1440×900 / 1920×1080 layouts at 100% zoom, keyboard isolation and
+  paused save/resume. It advances the browser clock for functional playthroughs;
+  it is not a real-time frame-rate measurement. No simulation mutation API is used.
+- `node tests/first-light-profile.mjs` records 30 measured CPU/storage iterations
+  after five warmups, including a maximum 64-unit / 4-queue / 64-raid / 8-event
+  snapshot and an interleaved pre-change ordinary-operation save comparison.
+  Node timings do not certify browser GPU or frame-rate behavior.
+
+Fixtures and their source provenance are in
+[fixtures/first-light/README.md](fixtures/first-light/README.md). Test output stays
+under ignored `output/playwright/`. Independent newcomer playtests and quiet-host
+60 FPS certification remain separate acceptance work.
+
+Use `HI_BROWSER_GAME=1 HI_BROWSER_FIRST_LIGHT=recovery npm run test:browser` for
+just the isolated reload/ownership/error cases. Browser checkpoint timings use
+an isolated native clock; the mission clock is synthetic and cannot measure FPS.

@@ -1,5 +1,6 @@
 import {accountURL, playURL} from '../entry-flow.js';
-import {RankedClient} from './ranked-client.js';
+import {DebriefStandings,contributionCopy,trainingHandoff} from './debrief.js';
+import {RankedClient,readJSON} from './ranked-client.js';
 import {enemyBriefing} from './enemy-ai.js';
 import {tree,branchAt,nodeInfo,facilitySite,initInfrastructure,startProject as rawStartProject,projectProblem,repairFacility as rawRepairFacility,cancelProject as rawCancelProject,techBonuses,techCost,techCompute,heatThreshold,researchStaffed,projectWait} from './faction-tech.js';
 import { kit, unitType, unitGuide, unitState, abilityProblem, updateFactionState } from './faction-rules.js';
@@ -7,7 +8,7 @@ import { FACTIONS, UNITS } from '../v2/world.js';
 import { WORLD, ROLES, SERVERS, launchRaid as rawLaunchRaid, returnHome as rawReturnHome, viewServer, createGame, spawn, tickGame, deploy as rawDeploy, cancelDeployment as rawCancelDeployment, command as rawCommand, ability as rawAbility, point, distance, compute, holdPosition as rawHoldPosition } from './engine.js';
 import { LiveWorld } from '../servers/live-world.js';
 import { serverSites } from '../servers/territories.js';
-import { UNIT_GUIDE, LESSONS, createTutorial, lesson, updateTutorial, advanceTutorial, tutorialAllows, tutorialAction, tutorialAbility, tutorialStatus, inspectTutorial, tutorialPhase, tutorialChoices, chooseTutorialBranch } from './tutorial.js';
+import { UNIT_GUIDE, LESSONS, createTutorial, lesson, updateTutorial, advanceTutorial, tutorialAllows, tutorialAction, tutorialAbility, tutorialStatus, inspectTutorial, tutorialPhase, tutorialChoices, chooseTutorialBranch, tutorialProgress, tutorialGoal, tutorialTakeaway, TUTORIAL_ORDER } from './tutorial.js';
 import { createOperation, tickOperation, activateEconomy as rawActivateEconomy, UPGRADES, DOCTRINES, upgradeBuilding as rawUpgradeBuilding, cancelUpgrade as rawCancelUpgrade, activateDoctrine as rawActivateDoctrine, captureRelay as rawCaptureRelay, scoreOperation, directOperation } from './operation.js';
 import { openingChecklist, suggestedRaid, operationGuide } from './opening-guide.js';
 import { LocalArchive } from './local-archive.js';
@@ -24,8 +25,9 @@ const images={},selected=new Set(),camera={x:800,y:441,zoom:1.1};
 let game=createGame(),lastServer='misanthropic',chosen='misanthropic',started=false,showcase=false,cinematic=false,drag=null,hover=null,last=0,accumulator=0,uiClock=0,toastUntil=0,renderTime=0,lastLog='',resultShown=false,audio=null,sound=false,lastAudio=0,helpPaused=false;
 let hudKeepouts=[];
 function refreshHudKeepouts(){const origin=canvas.getBoundingClientRect();hudKeepouts=[...document.querySelectorAll('.field-title,.camera-tools,.mini-panel,.toast')].map(e=>{const r=e.getBoundingClientRect();return {x:r.x-origin.x,y:r.y-origin.y,width:r.width,height:r.height};}).filter(r=>r.width&&r.height);}
-let width=0,height=0,scale=1,dpr=1,needsDraw=true,fpsSamples=[],frameHistory=[],worstFrames=[],inspected=null,guideKey='',unitListKey='',queueKey='',lastDraw=0,lessonCamera=false;
-let ranked=null,starting=false,accountUser=null;
+let width=0,height=0,scale=1,dpr=1,needsDraw=true,fpsSamples=[],frameHistory=[],worstFrames=[],inspected=null,guideKey='',unitListKey='',queueKey='',lastDraw=0,lessonCamera=false,activeLesson=null;
+let ranked=null,starting=false,accountUser=null,runGeneration=0,accountGeneration=0,orderProblem='',recoveryProblem='',saveWarning='',helpReturn=null;
+const standings=new DebriefStandings(renderStandings);let verifiedStandingsId=null;
 let runId=null,saveClock=0,archivePaused=false,settings=archive.settings(),lastSaved=null;
 const params=new URL(location.href).searchParams,autoOperation=params.get('autoplay')==='operation';
 const renderHz=60;
@@ -84,17 +86,28 @@ function accountMode(){
  $('commitment-copy').textContent=member?'My first verified start commits me to '+FACTIONS[member.faction].name+' for Local Season Zero.':'';
 }
 async function refreshAccount(){
- try{const response=await fetch('/api/account/me',{headers:{'X-HI-Client':'local-accounts-v1'},signal:AbortSignal.timeout(5000)});if(!response.ok)throw Error('Account service unavailable.');accountUser=(await response.json()).user;
-  if(accountUser){const r=await fetch('/api/account/matches',{headers:{'X-HI-Client':'local-accounts-v1'},signal:AbortSignal.timeout(5000)});if(r.ok){const data=await r.json(),requested=params.get('resume');if(requested&&/^[a-f0-9-]{36}$/.test(requested))RankedClient.remember({id:requested});else if(data.activeMatch)RankedClient.remember(data.activeMatch);else if(!RankedClient.saved()?.token)RankedClient.forget();}}
-  else if(!RankedClient.saved()?.token)RankedClient.forget();accountMode();refreshContinue();
- }catch(e){$('account-status').textContent=e.message+' Practice remains available.';}
+ const generation=++accountGeneration,run=runGeneration;standings.reset();verifiedStandingsId=null;renderStandings();
+ try{const data=await readJSON('/api/account/me',{'X-HI-Client':'local-accounts-v1'},'HI_ACCOUNT_UNAVAILABLE');
+  if(generation!==accountGeneration||run!==runGeneration)return;
+  if(!data||!Object.hasOwn(data,'user')||data.user&&(!FACTIONS[data.user.membership?.faction]||typeof data.user.id!=='string'||typeof data.user.callsign!=='string'))throw Error('HI_RESPONSE_INVALID');accountUser=data.user;
+  if(accountUser){const matches=await readJSON('/api/account/matches',{'X-HI-Client':'local-accounts-v1'},'HI_ACCOUNT_UNAVAILABLE');if(generation!==accountGeneration||run!==runGeneration)return;
+   const requested=params.get('resume');if(requested&&/^[a-f0-9-]{36}$/.test(requested))RankedClient.remember({id:requested});else if(matches.activeMatch&&/^[a-f0-9-]{36}$/.test(matches.activeMatch.id))RankedClient.remember(matches.activeMatch);else if(!RankedClient.saved()?.token)RankedClient.forget();
+  }else if(!RankedClient.saved()?.token)RankedClient.forget();accountMode();refreshContinue();
+ }catch{if(generation!==accountGeneration||run!==runGeneration)return;accountUser=null;$('account-status').textContent='HI_ACCOUNT_UNAVAILABLE · Account service unavailable. Practice remains available.';archive.fail('HI_ACCOUNT_UNAVAILABLE','account');}
+}
+function renderStandings(){
+ const status=ranked?.summary(),visible=status?.status==='verified'&&status.accountOwned&&!!game.result;
+ $('debrief-standings').hidden=!visible;$('standings-retry').hidden=!visible||standings.status!=='unavailable';
+ if(!visible){$('debrief-standings').textContent='';return;}
+ $('debrief-standings').textContent=standings.current?contributionCopy(standings.current,standings.baseline,game.operation.rival):standings.status==='unavailable'?'HI_STANDINGS_UNAVAILABLE · Current rank and contribution are unavailable. Your verified result is unchanged.':'Your result is verified. Loading current rank and faction contribution…';
 }
 $('verified-run').onchange=()=>{$('confirm-faction').checked=false;accountMode();};
 $('play-mode').onchange=()=>{$('verified-run').checked=$('play-mode').value==='ranked';$('verified-run').onchange();};
 async function reconnectVerified(){await ranked?.close();await start(false,false,true);}
 function renderVerified(){
  const status=ranked?.summary();$('verification-result').hidden=!status;$('verification-retry').hidden=!status||status.status!=='interrupted';$('result-account').hidden=!status?.accountOwned;$('result-leaderboard').hidden=!status?.accountOwned;$('session-account-link').hidden=!status||status.status!=='interrupted';
- if(!status)return;
+ if(!status){renderStandings();return;}
+ if(status.status==='verified'&&status.accountOwned&&accountUser&&verifiedStandingsId!==status.id){verifiedStandingsId=status.id;standings.load(true);}renderStandings();
  $('pause').disabled=true;$('new-run').textContent='End verified run';$('verified-reconnect').hidden=status.status!=='interrupted';
  const copy=status.status==='active'?'Server recording · '+time(status.acknowledgedTick*.05)+' acknowledged · no pause':status.status==='verified'?'Server verified · '+status.result.score+' points · '+(status.accountOwned?'saved to your account':'recorded locally'):['verifying','verification_failed'].includes(status.status)?(status.verification?.message||'Server replay in progress. Your result is pending.'):status.status==='interrupted'?(status.error||'Verification interrupted. Reconnect to recover acknowledged orders.'):status.error||'Verification rejected. This result has no verified points.';
  $('save-status').textContent=copy;$('verification-result').textContent=copy;
@@ -119,7 +132,7 @@ $('selection-info').onclick=showSelectionDetails;
 
 function select(ids,add=false){if(!add)selected.clear();for(const id of ids)if(game.units.some(u=>u.id===id&&u.team==='player'&&u.server===game.activeServer&&!u.transit)){if(add&&ids.length===1&&selected.has(id))selected.delete(id);else selected.add(id);}inspected=null;renderUI();}
 function inspectSite(id){const site=serverSites(game.activeServer).find(s=>s.id===id);if(!site)return;inspected={type:'site',site};inspectTutorial(game,id);renderUI();}
-function focusLesson(){const l=lesson(game);if(!l)return;lessonCamera=true;const units=game.units.filter(u=>u.team==='player'&&u.role===l.role&&u.server===game.activeServer&&!u.transit);if(units.length)select([units[0].id]);else{selected.clear();inspected=null;}if(game.tutorial.step===0){fit();return;}const p=l.follow?units[0]||point(l.site,game.activeServer):point(l.site,game.activeServer);focusCamera(p.x,p.y,l.site==='campus'?1.3:1.6);}
+function focusLesson(){const l=lesson(game);if(!l)return;lessonCamera=true;const units=game.units.filter(u=>u.team==='player'&&u.role===l.role&&u.server===game.activeServer&&!u.transit);if(units.length)select([units[0].id]);else{selected.clear();inspected=null;}if(tutorialPhase(game)==='campus'){fit();return;}const p=l.follow?units[0]||point(l.site,game.activeServer):point(l.site,game.activeServer);focusCamera(p.x,p.y,l.site==='campus'?1.3:1.6);}
 function useAbility(){const r=ranked?ability(game,[...selected]):tutorialAbility(game,[...selected]);notify(r.ok?'Field ability activated.':r.reason);renderUI();}
 function fieldOrder(kind){
  const units=game.units.filter(u=>u.team==='player'&&u.server===game.faction&&!u.transit&&(kind==='research'?u.role==='researcher':kind==='harvest'?u.role==='harvester':ROLES.find(r=>r.key===u.role).domain==='sea'));
@@ -136,43 +149,78 @@ function orderAt(p){
  }
  if(count){game.effects.push({server:game.activeServer,x:p.x,y:p.y,color:FACTIONS[game.faction].color,life:.7,max:.7,ring:true});notify(site?'Order → '+site.name:'Route order confirmed.');}else notify('This unit needs a route in its own movement layer.');
 }
-function setPause(value){if(!started||game.result)return;if(ranked&&value){notify('Verified operations use the server clock and cannot pause.');return;}game.paused=value;$('pause').textContent=ranked?'Live':value?'Resume':'Pause';$('pause').setAttribute('aria-pressed',String(value));$('pause-overlay').hidden=!value;last=performance.now();lastDraw=0;monitor.interrupt();attribution.reset();if(value)saveRun();needsDraw=true;}
+function setPause(value){if(!started||game.result)return;if(!value&&game.tutorial?.failure){showPanel('mission');$('lesson-action').focus();notify('Use the named training retry before resuming.');return;}if(ranked&&value){notify('Verified operations use the server clock and cannot pause.');return;}game.paused=value;$('pause').textContent=ranked?'Live':value?'Resume':'Pause';$('pause').setAttribute('aria-pressed',String(value));$('pause-overlay').hidden=!value;last=performance.now();lastDraw=0;monitor.interrupt();attribution.reset();if(value)saveRun();needsDraw=true;}
 function setCinematic(value){cinematic=value;document.body.classList.toggle('cinematic',value);$('camera-mode').setAttribute('aria-pressed',String(value));$('exit-camera').hidden=!value;$('scene-caption').hidden=!value;if(value){const p=point('campus',game.activeServer);camera.zoom=1.35;camera.x=p.x;camera.y=p.y;}resize();}
 function audioPulse(){if(sound&&audio)audio.update(game,camera);}
 async function start(watch=false,training=false,reconnect=false){
  if(starting)return;starting=true;$('verified-error').textContent='';
+ if(training&&archive.savedChoices().some(x=>x.record.game.tutorial)&&!confirm('Start First Light again? This replaces the saved tutorial and its recovery point. Cancel to keep your current progress.')){starting=false;return;}
+ const generation=++runGeneration;standings.reset();verifiedStandingsId=null;orderProblem=recoveryProblem=saveWarning='';
  const useServer=reconnect||(!watch&&!training&&!autoOperation&&$('verified-run').checked);
  if(useServer&&!reconnect&&!accountUser){starting=false;location.href=accountURL(chosen);return;}
  let prepared=null;
- try{if(useServer){$('start').disabled=true;$('continue-verified').disabled=true;const faction=$('faction-options').querySelector('[aria-pressed=true]')?.dataset.faction||chosen;prepared=reconnect?await RankedClient.resume(renderVerified):await RankedClient.create({faction,rival:$('operation-rival').value,difficulty:'standard'},renderVerified,$('confirm-faction').checked);}}
+ try{if(useServer){$('start').disabled=true;$('continue-verified').disabled=true;const faction=$('faction-options').querySelector('[aria-pressed=true]')?.dataset.faction||chosen;prepared=reconnect?await RankedClient.resume(()=>{if(generation===runGeneration&&prepared?.client===ranked)renderVerified();}):await RankedClient.create({faction,rival:$('operation-rival').value,difficulty:'standard'},()=>{if(generation===runGeneration&&prepared?.client===ranked)renderVerified();},$('confirm-faction').checked);}}
  catch(e){$('verified-error').textContent=e.message+' · Practice remains available.';if(ranked){ranked.status='interrupted';ranked.error=e.message;renderVerified();notify(e.message);}starting=false;$('start').disabled=false;$('continue-verified').disabled=false;return;}
+ if(generation!==runGeneration){prepared?.client.close();starting=false;return;}
+ if(training)await archive.claim();
  if(params.has('resume')){params.delete('resume');const url=new URL(location.href);url.searchParams.delete('resume');history.replaceState({},'',url);}ranked?.close();ranked=prepared?.client||null;starting=false;$('start').disabled=false;$('continue-verified').disabled=false;
  showPanel('mission');
- chosen=$('faction-options').querySelector('[aria-pressed=true]')?.dataset.faction||chosen;game=prepared?prepared.game:training?createTutorial(chosen,$('operation-rival').value):watch?createGame(chosen,$('relaxed').checked?'relaxed':'standard'):createOperation(chosen,$('operation-rival').value,$('relaxed').checked?'relaxed':'standard');started=true;frameHistory=[];worstFrames=[];monitor.reset();lastDraw=0;saveClock=0;runId=crypto.randomUUID();if(!autoOperation)archive.updateSettings({callsign:$('callsign').value,faction:chosen});settings=archive.settings();showcase=watch;resultShown=false;selected.clear();inspected=null;guideKey=unitListKey=queueKey=null;selected.add(game.units[0].id);$('briefing').close();$('result').close();setPause(false);document.body.classList.toggle('training',training);document.body.classList.toggle('operation',!!game.operation);if(!watch)setCinematic(false);renderRoster();lastServer=game.faction;const region=SERVERS[game.faction];setCamera(region.camera[0]*WORLD.width,region.camera[1]*WORLD.height,1.12);renderNetwork();last=performance.now();accumulator=0;lastLog='';
+ chosen=$('faction-options').querySelector('[aria-pressed=true]')?.dataset.faction||chosen;game=prepared?prepared.game:training?createTutorial(chosen,$('operation-rival').value):watch?createGame(chosen,$('relaxed').checked?'relaxed':'standard'):createOperation(chosen,$('operation-rival').value,$('relaxed').checked?'relaxed':'standard');started=true;frameHistory=[];worstFrames=[];monitor.reset();lastDraw=0;saveClock=0;runId=crypto.randomUUID();if(training){if(!archive.beginTutorial(runId,{replace:true}))saveWarning=archive.error;}if(!autoOperation)archive.updateSettings({callsign:$('callsign').value,faction:chosen});settings=archive.settings();showcase=watch;resultShown=false;selected.clear();inspected=null;guideKey=unitListKey=queueKey=null;selected.add(game.units[0].id);$('briefing').close();$('result').close();setPause(false);document.body.classList.toggle('training',training);document.body.classList.toggle('operation',!!game.operation);if(!watch)setCinematic(false);renderRoster();lastServer=game.faction;const region=SERVERS[game.faction];setCamera(region.camera[0]*WORLD.width,region.camera[1]*WORLD.height,1.12);renderNetwork();last=performance.now();accumulator=0;lastLog='';
  if(!watch&&!training)fit();
- if(watch){fieldOrder('research');fieldOrder('harvest');fieldOrder('cool');setCinematic(true);notify('SERVER SIEGE · build at home, breach a rival');}else if(training){focusLesson();notify('FIRST LIGHT · follow the next order in your mission panel.');}else notify('BLACKOUT PROTOCOL · start your home economy. Your mission panel shows the next decision.');renderUpgrades();renderUI();saveRun();canvas.focus({preventScroll:true});
- audio?.reset();if(ranked){chosen=game.faction;ranked.attach(game);renderVerified();}else{$('new-run').textContent='Save & menu';$('pause').disabled=false;$('verified-reconnect').hidden=true;$('session-account-link').hidden=true;}
+ if(watch){fieldOrder('research');fieldOrder('harvest');fieldOrder('cool');setCinematic(true);notify('SERVER SIEGE · build at home, breach a rival');}else if(training){focusLesson();prepareRecovery('Defend preparation');notify('FIRST LIGHT · follow the next order in your mission panel.');}else notify('BLACKOUT PROTOCOL · start your home economy. Your mission panel shows the next decision.');renderUpgrades();renderUI();saveRun();canvas.focus({preventScroll:true});
+ audio?.reset();if(ranked){chosen=game.faction;standings.reset(accountUser?{accountId:accountUser.id,accountGeneration,runId:ranked.ticket.id,rulesId:ranked.ticket.rulesId,faction:game.faction}:null);if(accountUser)standings.load(false);ranked.attach(game);renderVerified();}else{$('new-run').textContent='Save & menu';$('pause').disabled=false;$('verified-reconnect').hidden=true;$('session-account-link').hidden=true;}
+}
+function saveMeta(){return {camera:{...camera},selected:[...selected],runId};}
+function prepareRecovery(label){
+ if(!archive.prepareCheckpoint(game,saveMeta(),label)){recoveryProblem=archive.errorCode+' · '+archive.error;game.paused=true;return false;}
+ recoveryProblem='';return true;
+}
+function retryTraining(){
+ const checkpoint=archive.checkpoint;if(!checkpoint){recoveryProblem='HI_CHECKPOINT_INVALID · No recovery point is available. Keep this session or start training again from the menu.';renderUI();return;}
+ if(!confirm('Retry '+checkpoint.id+'? Restore the team, wallet, research and progress saved at '+time(checkpoint.game.time)+'. Later actions in this tutorial will be undone.'))return;
+ const restored=archive.restoreCheckpoint(game,runId);if(!restored){recoveryProblem=archive.errorCode+' · '+archive.error;renderUI();return;}
+ game=restored.game;selected.clear();for(const id of restored.meta.selected||[])if(game.units.some(u=>u.id===id&&u.team==='player'&&u.server===game.activeServer&&!u.transit))selected.add(id);
+ const c=restored.meta.camera;if(c)setCamera(c.x,c.y,c.zoom);orderProblem=recoveryProblem='';inspected=null;guideKey=unitListKey=queueKey=null;lastLog='';resultShown=false;lastServer=game.activeServer;accumulator=0;saveClock=0;last=performance.now();monitor.interrupt();audio?.reset();$('result').close();setCinematic(false);if(c)setCamera(c.x,c.y,c.zoom);renderNetwork();renderRoster();renderUpgrades();setPause(true);renderUI();notify('Restored '+checkpoint.id+'. Read your order, then Resume.');
+}
+function trainingTransition(action){
+ try{return action();}catch(error){archive.fail('HI_TRANSITION','training-transition',error);recoveryProblem='HI_TRANSITION · The order stopped. Retry the saved checkpoint or keep this session for diagnosis.';game.paused=true;$('pause-overlay').hidden=false;renderUI();return false;}
+}
+function guidedOrder(){return trainingTransition(()=>guidedOrderUnsafe());}
+function guidedOrderUnsafe(){
+ if(game.tutorial?.failure){retryTraining();return;}
+ if(recoveryProblem){if(archive.errorCode!=='HI_CHECKPOINT_PREPARE'){retryTraining();return;}if(archive.prepareRetries>=2){notify(recoveryProblem);return;}game.paused=false;recoveryProblem='';}
+ let r=tutorialAction(game);if(r?.needsCheckpoint){if(!prepareRecovery(r.checkpoint)){setPause(true);renderUI();return;}saveRun();r=tutorialAction(game,{release:true});}
+ orderProblem=r&&!r.ok?r.reason:'';if(orderProblem)archive.fail('HI_ORDER_BLOCKED','guided-order');
+ if(r?.ids?.length)select(r.ids);if(r?.inspect)inspectSite(r.inspect);if(orderProblem)notify(orderProblem);renderUI();
 }
 function saveRun(){
  if(ranked||!started||showcase||autoOperation||game.result||isPreview)return false;
- const ok=archive.save(game,{camera:{...camera},selected:[...selected],runId});
- if(ok){lastSaved=Date.now();$('save-status').textContent='Saved locally · '+new Date(lastSaved).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · autosaves every 15 seconds';}
- else $('save-status').textContent='Save unavailable: '+archive.error+'. Keep this tab open.';
+ const ok=archive.save(game,saveMeta());
+ if(ok){saveWarning='';lastSaved=Date.now();$('save-status').textContent='Saved locally · '+new Date(lastSaved).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})+' · autosave 15s';}
+ else{saveWarning=archive.errorCode+' · '+archive.error+' Recovery remains available in this tab.';$('save-status').textContent=saveWarning;}
  return ok;
 }
-function refreshContinue(){$('continue-verified').hidden=!RankedClient.saved();const saved=archive.load();$('continue-save').hidden=!saved;if(saved)$('continue-save').textContent=`Continue ${saved.game.operation?'Blackout Protocol':'First Light'} · ${FACTIONS[saved.game.faction].name} · ${time(saved.game.time)} ↗`;}
-function restoreRun(){
- ranked?.close();ranked=null;$('pause').disabled=false;$('new-run').textContent='Save & menu';$('verified-reconnect').hidden=true;
- showPanel('mission');
- const saved=archive.load();if(!saved){notify(archive.error||'No unfinished mission in this browser.');refreshContinue();return;}
+function refreshContinue(){
+ $('continue-verified').hidden=!RankedClient.saved();const choices=archive.savedChoices(),pick=$('save-choice'),prior=pick.value;
+ pick.replaceChildren(...choices.map(c=>{const o=document.createElement('option');o.value=c.source;o.textContent=(c.record.game.tutorial?'First Light':'Blackout Protocol')+' · '+FACTIONS[c.record.game.faction].name+' · '+time(c.record.game.time);return o;}));if(choices.some(c=>c.source===prior))pick.value=prior;
+ $('save-choice-label').hidden=choices.length<2;$('continue-save').hidden=!choices.length;
+ $('continue-save').textContent=choices.length>1?'Continue selected mission ↗':choices.length?'Continue '+pick.options[0].textContent+' ↗':'';
+ if(archive.error)$('verified-error').textContent=archive.errorCode+' · '+archive.error;
+}
+async function restoreRun(){
+ const source=$('save-choice').value||'auto',choices=archive.savedChoices();
+ if(source==='legacy'&&choices.length>1&&choices.find(c=>c.source==='legacy').record.game.tutorial&&!confirm('Migrate this older tutorial? The original stays intact, but saving it will replace the newer tutorial slot.'))return;
+ const saved=archive.load(source);if(!saved){notify(archive.error||'No unfinished mission in this browser.');refreshContinue();return;}
+ ++runGeneration;standings.reset();renderStandings();ranked?.close();ranked=null;if(saved.game.tutorial)await archive.claim();$('pause').disabled=false;$('new-run').textContent='Save & menu';$('verified-reconnect').hidden=true;showPanel('mission');
  game=saved.game;started=true;showcase=false;resultShown=false;chosen=game.faction;for(const b of $('faction-options').querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.faction===chosen));rivalChoices();runId=saved.meta.runId||crypto.randomUUID();selected.clear();
- for(const id of saved.meta.selected||[])if(game.units.some(u=>u.id===id&&u.team==='player'))selected.add(id);
- inspected=null;guideKey=unitListKey=queueKey=null;lastServer=game.activeServer;lastLog='';frameHistory=[];worstFrames=[];monitor.reset();saveClock=0;accumulator=0;
+ for(const id of saved.meta.selected||[])if(game.units.some(u=>u.id===id&&u.team==='player'&&u.server===game.activeServer&&!u.transit))selected.add(id);
+ orderProblem=recoveryProblem='';inspected=null;guideKey=unitListKey=queueKey=null;lastServer=game.activeServer;lastLog='';frameHistory=[];worstFrames=[];monitor.reset();saveClock=0;accumulator=0;
  $('briefing').close();$('result').close();document.body.classList.toggle('training',!!game.tutorial);document.body.classList.toggle('operation',!!game.operation);setCinematic(false);
- const c=saved.meta.camera;if(c&&[c.x,c.y,c.zoom].every(Number.isFinite))setCamera(c.x,c.y,c.zoom);else{const p=point('campus',game.activeServer);setCamera(p.x,p.y,1.25);}
- renderNetwork();renderRoster();renderUpgrades();audio?.reset();setPause(false);renderUI();notify('Saved mission restored. The simulation resumes from your last checkpoint.');
+ const c=saved.meta.camera;if(c&&[c.x,c.y,c.zoom].every(Number.isFinite))setCamera(c.x,c.y,c.zoom);else{const p=point('campus',game.activeServer);setCamera(p.x,p.y,1.25);notify('Saved camera unavailable. Showing your campus.');}
+ renderNetwork();renderRoster();renderUpgrades();audio?.reset();setPause(true);renderUI();const progress=tutorialProgress(game);notify(progress?progress.chapter+' · '+lesson(game).title+'. Restored paused; Resume when ready.':'Saved operation restored paused. Resume when ready.');
 }
 async function showMenu(){
+ ++runGeneration;standings.reset();verifiedStandingsId=null;renderStandings();
  const wasVerified=!!ranked;
  if(ranked){const prior=ranked;started=false;await prior.abandon().catch(e=>notify(e.message));ranked=null;$('pause').disabled=false;$('verified-reconnect').hidden=true;}
  if(started&&!game.result){if(wasVerified)game.paused=true;else setPause(true);}$('result').close();setCinematic(false);started=false;document.body.classList.remove('training','operation');
@@ -253,19 +301,20 @@ function renderRoster(){
 }
 function time(v){return `${Math.floor(v/60).toString().padStart(2,'0')}:${Math.floor(v%60).toString().padStart(2,'0')}`;}
 function renderGuidance(){
- const t=game.tutorial;if(t)updateTutorial(game);const l=lesson(game),campusLesson=['build','research','expand','specialize'].includes(tutorialPhase(game));$('tutorial-panel').hidden=!t;$('lesson-tech').hidden=!campusLesson;
+ const t=game.tutorial;if(t)updateTutorial(game);const l=activeLesson=lesson(game),campusLesson=['build','research','expand','specialize'].includes(tutorialPhase(game));$('tutorial-panel').hidden=!t;$('lesson-tech').hidden=!campusLesson;
  if(t){
-  const key=[t.step,t.opening,t.support,t.final,game.infrastructure?.[game.faction]?.revision||0,t.formationRallied,t.formationCasts.join(',')].join(':');
-  if(key!==guideKey){const changedStep=guideKey?.split(':')[0]!==String(t.step);guideKey=key;
-   $('lesson-number').textContent=`${String(t.step+1).padStart(2,'0')} / ${LESSONS.length}`;$('lesson-title').textContent=l.title;
+  if(t.ready)orderProblem='';
+  const progress=tutorialProgress(game),key=[t.objectiveId,t.opening,t.support,t.final,game.infrastructure?.[game.faction]?.revision||0,t.formationRallied,t.formationCasts.join(',')].join(':');
+  if(key!==guideKey){const changedStep=guideKey?.split(':')[0]!==t.objectiveId;guideKey=key;
+   $('lesson-number').textContent=`${progress.completed} / ${progress.total} goals`;$('lesson-title').textContent=progress.chapter+' · '+l.title;
    if(changedStep){document.querySelector('#tutorial-panel .lesson-explainer').open=false;document.querySelector('#tutorial-panel .lesson-body').scrollTop=0;}
-   $('lesson-copy').textContent=l.copy;$('lesson-task').textContent=l.task;$('lesson-progress').innerHTML=LESSONS.map((_,i)=>`<i class="${i<t.step?'done':i===t.step?'current':''}"></i>`).join('');
+   $('lesson-copy').textContent=l.copy;$('lesson-task').textContent=l.task;$('lesson-progress').innerHTML=LESSONS.map(goal=>`<i class="${goal.id===tutorialGoal(game)?'current':goal.id==='formation'?(t.completed.includes('formation.open')&&t.completed.includes('formation.finish')?'done':''):t.completed.includes(goal.id)?'done':''}"></i>`).join('');
    const choices=tutorialChoices(game);$('lesson-choices').hidden=!choices.length;
    $('lesson-choices').innerHTML=choices.length?'<legend>'+ (l.choice==='final'?'One final specialization per mission':'Compare your three branches')+'</legend>'+choices.map(c=>`<button type="button" data-tutorial-branch="${c.index}" aria-pressed="${c.selected}" ${c.disabled?'disabled':''}><strong>${c.name}</strong><span>${c.cost} funds${l.choice==='final'?' · final research':' · construction'}</span></button>${c.selected?`<div class="lesson-choice-detail"><p>${c.effect}</p><p>${c.advice}</p></div>`:''}`).join(''):'';
    for(const button of $('lesson-choices').querySelectorAll('button'))button.onclick=()=>{if(chooseTutorialBranch(game,Number(button.dataset.tutorialBranch)))renderUI();};
   }
-  $('lesson-status').textContent=tutorialStatus(game);$('lesson-status').classList.toggle('complete',t.ready||t.complete);$('lesson-action').textContent=l.action;
-  $('lesson-action').disabled=t.ready||!!game.result||game.paused||!!l.choice&&t[l.choice]===null||campusLesson&&!!game.infrastructure[game.faction].project;
+  $('lesson-task').textContent=l.task;$('lesson-status').textContent=recoveryProblem||(t.failure?'HI_ENCOUNTER_FAILED · '+t.failure:orderProblem?'HI_ORDER_BLOCKED · '+orderProblem:tutorialStatus(game));$('lesson-status').classList.toggle('complete',t.ready||t.complete);$('lesson-action').textContent=t.failure?'Retry '+(archive.checkpoint?.id||'training'):recoveryProblem?(archive.errorCode==='HI_CHECKPOINT_PREPARE'?'Retry recovery preparation':'Retry '+(archive.checkpoint?.id||'training')):l.action;
+  $('lesson-action').disabled=!t.failure&&!recoveryProblem&&(t.ready||!!game.result||game.paused||!!l.choice&&t[l.choice]===null||campusLesson&&!!game.infrastructure[game.faction].project);
   $('lesson-next').disabled=!t.ready||t.complete||game.paused;$('lesson-next').textContent=t.complete?'Training complete':t.ready?'Next lesson ↗':'Complete this order to continue';
  }
  const localUnits=game.units.filter(u=>u.team==='player'&&!u.transit&&u.server===game.activeServer),key=localUnits.map(u=>u.id).join(',');
@@ -290,12 +339,12 @@ function renderGuidance(){
  $('deployment-hint').hidden=ROLES.some(r=>tutorialAllows(game,r.key));
  $('deployment-hint').textContent='First, learn your campus. Unit deployment unlocks as you progress through training.';
  $('deployment-label').textContent=t?'DEPLOYMENT / UNLOCKS DURING TRAINING':'DEPLOY UNITS';
- if(t){$('lesson-action').hidden=t.ready||t.complete;$('lesson-next').hidden=!t.ready||t.complete;}
+ if(t){$('lesson-action').hidden=!t.failure&&!recoveryProblem&&(t.ready||t.complete);$('lesson-next').hidden=!t.ready||t.complete;}
  
- const raidLocked=!!t&&t.step<LESSONS.findIndex(l=>l.id==='transfer');for(const b of $('server-navigation').querySelectorAll('button'))b.disabled=!!t&&b.dataset.server!==game.faction&&(raidLocked||b.dataset.server!==t.rival);$('attack-server').disabled=raidLocked||!!game.result;$('rival-target').disabled=raidLocked||!!t;if(t)$('rival-target').value=t.rival;
+ const raidLocked=!!t&&!['transfer','recon','sabotage','endpoint'].includes(t.objectiveId);for(const b of $('server-navigation').querySelectorAll('button'))b.disabled=!!t&&b.dataset.server!==game.faction&&(raidLocked||b.dataset.server!==t.rival);$('attack-server').disabled=raidLocked||!!game.result;$('rival-target').disabled=raidLocked||!!t;if(t)$('rival-target').value=t.rival;
 }
 function renderUI(){
- needsDraw=true;compute(game);document.documentElement.style.setProperty('--accent',FACTIONS[game.faction].color);document.documentElement.style.setProperty('--accent-ink',FACTIONS[game.faction].dark);$('lab-name').textContent=FACTIONS[game.faction].name;$('game-clock').textContent=time(game.time);$('funds').textContent=Math.floor(game.funds);$('energy').textContent=Math.floor(game.energy);$('compute').textContent=`${game.used} / ${game.capacity}`;$('heat').textContent=Math.round(game.heat)+'°';$('heat').style.color=game.heat>heatThreshold(game)?'#ba4e32':'';$('quality').textContent=Math.round(game.quality)+'%';$('research-bar').style.transform=`scaleX(${game.progress/100})`;$('research-percent').textContent=Math.floor(game.progress)+'% verified';$('campus-integrity').textContent=Math.round(game.campus/10)+'%';
+ needsDraw=true;if(saveWarning&&!ranked)$('save-status').textContent=saveWarning;compute(game);document.documentElement.style.setProperty('--accent',FACTIONS[game.faction].color);document.documentElement.style.setProperty('--accent-ink',FACTIONS[game.faction].dark);$('lab-name').textContent=FACTIONS[game.faction].name;$('game-clock').textContent=time(game.time);$('funds').textContent=Math.floor(game.funds);$('energy').textContent=Math.floor(game.energy);$('compute').textContent=`${game.used} / ${game.capacity}`;$('heat').textContent=Math.round(game.heat)+'°';$('heat').style.color=game.heat>heatThreshold(game)?'#ba4e32':'';$('quality').textContent=Math.round(game.quality)+'%';$('research-bar').style.transform=`scaleX(${game.progress/100})`;$('research-percent').textContent=Math.floor(game.progress)+'% verified';$('campus-integrity').textContent=Math.round(game.campus/10)+'%';
  const server=SERVERS[game.activeServer],target=game.attackTarget;
  $('objective-state').textContent=game.result==='victory'?'SERVER OFFLINE':target?'RAID ACTIVE':'HOME ONLINE';
  $('objective-copy').textContent=target?`Bring ${FACTIONS[target].name}'s campus endpoint offline. Your home harvesters, researchers and cooling fleet keep running while the raid is away.`:'Your own server is online. Start its energy and cooling economy, then choose an opponent to attack through the uplink.';
@@ -321,11 +370,12 @@ function renderUI(){
  b.querySelector('em').textContent=cost+' / '+cp+' CP';b.disabled=!!reason;b.title=reason||`${UNITS[game.faction][type.index].name} — ${unitGuide(game.faction,type.key,{},game).job}`;b.setAttribute('aria-label',`Deploy ${UNIT_GUIDE[type.key].title}: ${UNITS[game.faction][type.index].name}, ${cost} funds${reason?', '+reason:''}`);}
  const qkey=game.queue.map(q=>q.role+q.total).join(',');if(qkey!==queueKey){queueKey=qkey;$('queue').innerHTML=game.queue.map((q,i)=>`<button data-queue="${i}" aria-label="Cancel ${UNITS[game.faction][ROLES.find(r=>r.key===q.role).index].name} deployment"><i></i><span>${UNITS[game.faction][ROLES.find(r=>r.key===q.role).index].name}</span><span></span></button>`).join('');for(const b of $('queue').querySelectorAll('button'))b.onclick=()=>{cancelDeployment(game,Number(b.dataset.queue));renderUI();};}for(const [i,b]of [...$('queue').querySelectorAll('button')].entries()){const q=game.queue[i];b.querySelector('i').style.transform=`scaleX(${1-q.remaining/q.total})`;b.lastElementChild.textContent=game.operation?.productionPaused?'WAIT · STAFF ×':Math.ceil(q.remaining)+'s ×';}
  renderGuidance();renderOperation();renderTechnology();
- const event=game.events[0];if(event&&event.text!==lastLog){lastLog=event.text;if(cinematic&&event.text.includes('disruption team'))notify(event.text);$('event-log').innerHTML=game.events.slice(0,4).map(e=>`<li><time>${time(e.time)}</time>${e.text}</li>`).join('');}
+ const event=game.events[0];if(event&&event.text!==lastLog){lastLog=event.text;if(cinematic&&event.text.includes('disruption team'))notify(event.text);$('event-log').replaceChildren(...game.events.slice(0,4).map(e=>{const li=document.createElement('li'),stamp=document.createElement('time');stamp.textContent=time(e.time);li.append(stamp,document.createTextNode(e.text));return li;}));}
  if(game.result&&!resultShown){resultShown=true;
-  const win=game.result==='victory';$('training-operation').hidden=!(win&&game.tutorial);$('training-ranked').hidden=!(win&&game.tutorial);$('training-ranked').href=accountUser?playURL(accountUser.membership.faction,'ranked',game.tutorial?.rival):accountURL(game.faction);$('training-ranked').textContent=accountUser?'Play for '+FACTIONS[accountUser.membership.faction].name+' ↗':'Join '+FACTIONS[game.faction].name+' & play for your faction ↗';$('result-title').textContent=win&&game.tutorial?'First Light complete.':win?'Rival server offline.':game.result==='timeout'?'The raid window closed.':'Your home server went dark.';$('result-copy').textContent=win&&game.tutorial?'You built a faction campus, chose a final specialization, used your formation advantage, countered the rival and disabled its technology. In Blackout Protocol, rivals rebuild and adapt; capture the data relay before the final siege.':win?`${FACTIONS[game.faction].name} breached ${FACTIONS[game.attackTarget].name}'s own continent. Home operations stayed online.`:'Stage models, agents and a firewall at your home uplink. Keep home researchers, energy and cooling running while the raid advances.';
+  const win=game.result==='victory';const handoff=trainingHandoff(game.faction,game.tutorial?.rival,accountUser);$('training-operation').textContent=handoff.practice;$('training-handoff').hidden=!(win&&game.tutorial);$('training-handoff').textContent=handoff.note;$('training-allegiance').hidden=!(win&&game.tutorial&&handoff.changeHref);$('training-allegiance').href=handoff.changeHref||'#';$('training-operation').hidden=!(win&&game.tutorial);$('training-ranked').hidden=!(win&&game.tutorial);$('training-ranked').href=handoff.href;$('training-ranked').textContent=handoff.ranked;$('result-title').textContent=win&&game.tutorial?'First Light complete.':win?'Rival server offline.':game.result==='timeout'?'The raid window closed.':'Your home server went dark.';$('result-copy').textContent=win&&game.tutorial?'You built a faction campus, chose a final specialization, used your formation advantage, countered the rival and disabled its technology. In Blackout Protocol, rivals rebuild and adapt; capture the data relay before the final siege.':win?`${FACTIONS[game.faction].name} breached ${FACTIONS[game.attackTarget].name}'s own continent. Home operations stayed online.`:'Stage models, agents and a firewall at your home uplink. Keep home researchers, energy and cooling running while the raid advances.';
   const scored=scoreOperation(game);let savedResult=null;if(scored&&!autoOperation&&!ranked){savedResult=archive.record(game,runId,settings.callsign);archive.clearSave();}
-  else if(game.tutorial)archive.clearSave();
+  else if(game.tutorial){if(win)archive.clearSave(game);else archive.markTrainingDefeat(game,runId);}
+  $('training-retry').hidden=!game.tutorial||win||!archive.checkpoint;$('result-takeaway').textContent=game.tutorial?tutorialTakeaway(game):'';
   $('result-stats').innerHTML=`<div><small>RUN TIME</small><strong>${time(game.time)}</strong></div><div><small>${ranked?'SERVER SCORE':scored?'LOCAL SCORE':'CONTAINED'}</small><strong>${ranked?'PENDING':scored?scored.score:game.stats.contained}</strong></div><div><small>${scored?'MEDAL':'DISRUPTED'}</small><strong>${ranked?'—':scored?scored.medal:Math.floor(game.progress)+'%'}</strong></div>`;
   $('score-breakdown').replaceChildren();if(scored&&!ranked){for(const [key,value]of Object.entries(scored.breakdown)){const row=document.createElement('div');row.textContent=`${key.charAt(0).toUpperCase()+key.slice(1)} · ${value}`;$('score-breakdown').append(row);}const note=document.createElement('p');note.textContent=autoOperation?'Director demonstration. This result does not enter your local standings.':!savedResult?'Browser storage could not keep this result. Your score remains visible in this debrief.':win?'Recorded in this browser. Secure the relay and protect home to improve your medal.':'No ranked local points for a failed operation. Try a stronger home defence or earlier offshore expansion.';$('score-breakdown').append(note);}
   $('scene-caption').querySelector('strong').textContent=win?'Their server went dark. Yours stayed online.':'Every server has a breaking point.';
@@ -340,14 +390,14 @@ function draw(){
  const sites=serverSites(game.activeServer),hoverHit=hover&&!drag?live.pick(hover):null,healthViewport={width,height,blocked:[...hudKeepouts]};
  const attacked=game.effects.some(e=>e.server===game.activeServer&&e.kind==='siege');
  const campusHealth=buildingHealth(game.servers[game.activeServer],{attacked,inspected:hoverHit?.site==='campus'||inspected?.site?.id==='campus'});
- const focused=game.units.find(u=>selected.has(u.id)),contextSite=lesson(game)?.site||inspected?.site?.id||(focused?.role==='researcher'?'lab':focused?.role==='harvester'?'grid':['cooler','cloud'].includes(focused?.role)?'intake':null);
- for(const site of sites){if(site.id==='campus'&&campusHealth)continue;if(site.id.startsWith('facility')){if(game.infrastructure?.[game.activeServer]?.buildings[site.id]?.built||contextSite!==site.id)continue;}if(game.tutorial?.step!==0&&!['campus','gate',contextSite].includes(site.id))continue;const p=live.project(site,.25);if(p.x>30&&p.x<width-30&&p.y>40&&p.y<height-35)label(site.name,p.x,p.y+24,'#f5f1e8ed','#294837',14);}
- for(const u of unitCallouts(game.units.filter(u=>u.server===game.activeServer),selected,lesson(game)?.role)){
+ const focused=game.units.find(u=>selected.has(u.id)),contextSite=activeLesson?.site||inspected?.site?.id||(focused?.role==='researcher'?'lab':focused?.role==='harvester'?'grid':['cooler','cloud'].includes(focused?.role)?'intake':null);
+ for(const site of sites){if(site.id==='campus'&&campusHealth)continue;if(site.id.startsWith('facility')){if(game.infrastructure?.[game.activeServer]?.buildings[site.id]?.built||contextSite!==site.id)continue;}if(tutorialPhase(game)!=='campus'&&!['campus','gate',contextSite].includes(site.id))continue;const p=live.project(site,.25);if(p.x>30&&p.x<width-30&&p.y>40&&p.y<height-35)label(site.name,p.x,p.y+24,'#f5f1e8ed','#294837',14);}
+ for(const u of unitCallouts(game.units.filter(u=>u.server===game.activeServer),selected,activeLesson?.role)){
   const p=live.project(u,u.role==='model'?5:3.4);if(p.x<30||p.x>width-30||p.y<25||p.y>height-30)continue;label(UNIT_GUIDE[u.role].title,p.x,p.y-9,'#f5f1e8f0','#294837',14);
  }
  if(campusHealth){const site=sites.find(s=>s.id==='campus'),p=live.siteAnchor('campus');if(p&&p.x>-120&&p.x<width+120&&p.y>0&&p.y<height)healthViewport.blocked.push(drawBuildingHealth(ctx,site.name,campusHealth,p,healthViewport));}
  for(const site of sites.filter(s=>s.id.startsWith('facility'))){const b=game.infrastructure?.[game.activeServer]?.buildings[site.id];if(!b?.built)continue;const attacked=b.hitUntil>game.time,inspect=hoverHit?.site===site.id||inspected?.site?.id===site.id;if(!attacked&&!inspect)continue;const hp=buildingHealth({integrity:b.hp,maxIntegrity:b.maxHp},{attacked,inspected:inspect}),p=live.siteAnchor(site.id);if(hp&&p&&p.x>0&&p.x<width&&p.y>0&&p.y<height)healthViewport.blocked.push(drawBuildingHealth(ctx,site.name,hp,p,healthViewport));}
- if(game.tutorial&&!cinematic){const l=lesson(game),q=point(l.site,game.activeServer),p=live.project(q,.3),radius=Math.max(25,54*camera.zoom);ctx.strokeStyle=FACTIONS[game.faction].color;ctx.lineWidth=2;ctx.setLineDash([7,5]);ctx.beginPath();ctx.ellipse(p.x,p.y,radius,radius*.45,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}
+ if(game.tutorial&&!cinematic){const l=activeLesson,q=point(l.site,game.activeServer),p=live.project(q,.3),radius=Math.max(25,54*camera.zoom);ctx.strokeStyle=FACTIONS[game.faction].color;ctx.lineWidth=2;ctx.setLineDash([7,5]);ctx.beginPath();ctx.ellipse(p.x,p.y,radius,radius*.45,0,0,Math.PI*2);ctx.stroke();ctx.setLineDash([]);}
  if(game.operation&&game.activeServer===game.operation.rival&&!cinematic){const q=point(game.operation.relay.node,game.activeServer),p=live.project(q,.8);label(game.operation.relay.captured?'DATA RELAY · SECURED':'DATA RELAY · OPTIONAL',p.x,p.y-38,'#20382fee','#f8f0df',14);}
  if(drag&&drag.kind==='select'&&Math.hypot(drag.current.x-drag.start.x,drag.current.y-drag.start.y)>6){ctx.fillStyle='#f7f4e62b';ctx.strokeStyle=FACTIONS[game.faction].color;ctx.lineWidth=1;ctx.fillRect(drag.start.x,drag.start.y,drag.current.x-drag.start.x,drag.current.y-drag.start.y);ctx.strokeRect(drag.start.x,drag.start.y,drag.current.x-drag.start.x,drag.current.y-drag.start.y);}
  if(hoverHit){const u=hoverHit.unit?game.units.find(u=>u.id===hoverHit.unit):null,site=hoverHit.site?sites.find(s=>s.id===hoverHit.site):null;if(u||site){const text=u?`${UNITS[u.faction][ROLES.find(r=>r.key===u.role).index].name} · ${FACTIONS[u.faction].name} · ${Math.ceil(u.hp)} / ${u.maxHp}${unitState(game,u)?' · '+unitState(game,u):''}`:site.name;label(text,Math.max(180,Math.min(width-180,hover.x)),Math.max(35,hover.y-45),u&&u.team!=='player'?'#4d2924f2':'#f5f1e7ed',u&&u.team!=='player'?'#fff0e7':'#2d4b3a',14);}}
@@ -359,7 +409,7 @@ function frame(now){
  attribution.callback(now,callbackAt);cadence.callback(now);
  const rawElapsed=Math.max(0,(now-(last||now))/1000),elapsed=Math.min(.25,rawElapsed);last=now;
  if(started&&!game.paused&&!document.hidden)renderTime+=rawElapsed;
- if(lessonCamera&&game.tutorial&&lesson(game).follow&&!game.paused){const u=game.units.find(u=>u.team==='player'&&u.role===lesson(game).role&&u.server===game.activeServer&&!u.transit);if(u&&u.moving){const k=1-Math.exp(-elapsed*2.5);camera.x+=(u.x-camera.x)*k;camera.y+=(u.y-camera.y)*k;}}
+ if(lessonCamera&&game.tutorial&&activeLesson?.follow&&!game.paused){const u=game.units.find(u=>u.team==='player'&&u.role===activeLesson?.role&&u.server===game.activeServer&&!u.transit);if(u&&u.moving){const k=1-Math.exp(-elapsed*2.5);camera.x+=(u.x-camera.x)*k;camera.y+=(u.y-camera.y)*k;}}
  if(ranked&&started){ranked.advance(game);syncServer();if(!document.hidden)audioPulse();}
  else if(started&&!game.paused&&!document.hidden){accumulator+=rawElapsed;while(accumulator>=.05){director();if(autoOperation)directOperation(game);tickOperation(game,.05);updateTutorial(game);syncServer();accumulator-=.05;if(game.result){accumulator=0;break;}}saveClock+=rawElapsed;if(saveClock>=15){saveRun();saveClock=0;}audioPulse();}
  const simulationEnd=performance.now();
@@ -388,7 +438,7 @@ canvas.addEventListener('pointerup',e=>{if(!drag||drag.id!==e.pointerId)return;c
 canvas.addEventListener('pointercancel',()=>drag=null);canvas.addEventListener('pointerleave',()=>hover=null);canvas.addEventListener('contextmenu',e=>{e.preventDefault();orderAt(world(pointer(e)));});
 canvas.addEventListener('wheel',e=>{e.preventDefault();lessonCamera=false;const p=pointer(e),before=world(p);camera.zoom=Math.max(.45,Math.min(3.2,camera.zoom*Math.exp(-e.deltaY*.001)));live.updateCamera(camera);const after=world(p);setCamera(camera.x+before.x-after.x,camera.y+before.y-after.y);},{passive:false});
 mini.addEventListener('pointerdown',e=>{lessonCamera=false;const r=mini.getBoundingClientRect();setCamera((e.clientX-r.left)/r.width*WORLD.width,(e.clientY-r.top)/r.height*WORLD.height);});
-document.addEventListener('keydown',e=>{if($('briefing').open||$('result').open||$('help').open||$('archive').open)return;if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement)return;
+document.addEventListener('keydown',e=>{if($('briefing').open||$('result').open||$('help').open||$('archive').open)return;if(e.target.closest?.('input,select,textarea,button,a,summary,[contenteditable=true]')||e.altKey||e.metaKey||e.ctrlKey)return;
  if(e.code==='Space'&&!(e.target instanceof HTMLButtonElement)){e.preventDefault();setPause(!game.paused);}if(e.key.toLowerCase()==='c')setCinematic(!cinematic);if(e.key.toLowerCase()==='h')focusCamera(point('campus',game.activeServer).x,point('campus',game.activeServer).y,1.4);if(e.key.toLowerCase()==='f')fit();
  if(e.key.toLowerCase()==='e')useAbility();
  if(e.key.toLowerCase()==='s'){const count=holdPosition(game,[...selected]);if(count)notify('Selected units holding position.');}
@@ -400,8 +450,12 @@ function fit(){const view=live.fitView(game.activeServer);setCamera(view.x,view.
 $('field-team').onclick=()=>fieldOrder('research');$('attack-server').onclick=()=>{const r=launchRaid(game,$('rival-target').value,game.operation?[...selected]:null);notify(r.ok?'Selected field team staging at home. The rival continent opens after transfer.':r.reason);};$('return-team').onclick=()=>{const r=returnHome(game,[...selected]);notify(r.ok?'Selected field team staging for return to home.':r.reason);};$('harvest-order').onclick=()=>fieldOrder('harvest');$('cool-order').onclick=()=>fieldOrder('cool');$('ability').onclick=useAbility;
 $('pause').onclick=()=>setPause(!game.paused);$('resume').onclick=()=>setPause(false);$('zoom-in').onclick=()=>{lessonCamera=false;setCamera(camera.x,camera.y,camera.zoom*1.2);};$('zoom-out').onclick=()=>{lessonCamera=false;setCamera(camera.x,camera.y,camera.zoom/1.2);};$('fit').onclick=()=>{lessonCamera=false;fit();};$('home-camera').onclick=()=>focusCamera(point('campus',game.activeServer).x,point('campus',game.activeServer).y,1.4);
 $('camera-mode').onclick=()=>setCinematic(!cinematic);$('exit-camera').onclick=()=>setCinematic(false);$('start').onclick=()=>start(false);$('showcase').onclick=()=>start(true);$('tutorial-start').onclick=()=>start(false,true);
-$('lesson-action').onclick=()=>{const r=tutorialAction(game);if(r?.ids?.length){select(r.ids);if(tutorialPhase(game)==='formation'&&r.ids.length===1){const u=game.units.find(u=>u.id===r.ids[0]);focusCamera(u.x,u.y,1.6);}}if(r?.inspect)inspectSite(r.inspect);if(r&&!r.ok)notify(r.reason);renderUI();};
-$('lesson-next').onclick=()=>{if(advanceTutorial(game)){focusLesson();renderUI();}};$('lesson-tech').onclick=()=>showPanel('systems');
+$('lesson-action').onclick=guidedOrder;
+$('lesson-next').onclick=()=>trainingTransition(()=>{const p=tutorialPhase(game);if(game.tutorial?.ready&&!game.paused){if(p==='cloud'&&!prepareRecovery('Sustain campus')||p==='counter'&&!prepareRecovery('Rival breach')){setPause(true);renderUI();return;}if(advanceTutorial(game)){lessonCamera=false;orderProblem='';saveRun();renderUI();}}});$('lesson-tech').onclick=()=>showPanel('systems');
+$('lesson-help').onclick=()=>{helpReturn=$('lesson-help');showPanel('details');$('return-order').hidden=false;$('return-order').focus();};
+$('return-order').onclick=()=>{showPanel('mission');$('return-order').hidden=true;helpReturn?.focus();};
+$('training-retry').onclick=retryTraining;
+$('standings-retry').onclick=()=>standings.load(true);
 $('lesson-focus').onclick=focusLesson;
 $('sound').onclick=async()=>{if(!audio)audio=new BattleAudio();sound=!sound;await audio.enable(sound);$('sound').textContent=sound?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(sound));};
 $('training-operation').onclick=()=>{$('verified-run').checked=false;$('confirm-faction').checked=false;chosen=game.faction;for(const b of $('faction-options').querySelectorAll('button'))b.setAttribute('aria-pressed',String(b.dataset.faction===chosen));rivalChoices();if(game.tutorial)$('operation-rival').value=game.tutorial.rival;accountMode();start(false,false);};
@@ -479,5 +533,5 @@ try{
 }catch(e){$('loading').querySelector('strong').textContent='The server could not open.';$('loading').querySelector('p').textContent='Your match has not started. Retry the download to continue. '+e.message;$('field-status').textContent=e.message;$('loading-retry').hidden=false;console.error(e);}
 
 // Local, read-only telemetry for capture tooling and browser verification.
-window.addEventListener('beforeunload',()=>{ranked?.close();saveRun();audio?.dispose();live.dispose();});
-window.hostileDemo={verified:()=>ranked?.summary()||null,frames:()=>frameHistory.slice(),worstFrames:()=>worstFrames.slice(),performance:()=>({...monitor.summary(),targetRenderHz:renderHz}),audio:()=>({enabled:sound,state:audio?.context.state||'not-created',voices:audio?.voices||0}),archive:()=>archive.history(),graphics:()=>live.stats(),snapshot:()=>structuredClone({game,selected:[...selected],camera,started,showcase,cinematic,animation:game.units.filter(u=>u.server===game.activeServer&&!u.transit).map(u=>({id:u.id,role:u.role,moving:u.moving,phase:u.animDistance,heading:u.heading}))}),worldToScreen:p=>screen(p)};
+window.addEventListener('beforeunload',()=>{ranked?.close();saveRun();archive.release();audio?.dispose();live.dispose();});
+window.hostileDemo={verified:()=>ranked?.summary()||null,frames:()=>frameHistory.slice(),worstFrames:()=>worstFrames.slice(),performance:()=>({...monitor.summary(),targetRenderHz:renderHz}),audio:()=>({enabled:sound,state:audio?.context.state||'not-created',voices:audio?.voices||0}),archive:()=>archive.history(),diagnostics:()=>structuredClone(archive.diagnostics),graphics:()=>live.stats(),snapshot:()=>structuredClone({game,selected:[...selected],camera,started,showcase,cinematic,animation:game.units.filter(u=>u.server===game.activeServer&&!u.transit).map(u=>({id:u.id,role:u.role,moving:u.moving,phase:u.animDistance,heading:u.heading}))}),worldToScreen:p=>screen(p)};

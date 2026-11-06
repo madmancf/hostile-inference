@@ -1,5 +1,6 @@
 // Portable UI regression: one owned headless browser and disposable server data.
 import assert from 'node:assert/strict';
+import {runFirstLight} from './first-light-browser.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
@@ -30,6 +31,7 @@ const stop=async()=>{await browser?.close().catch(()=>{});await stopServer();};
 for(const signal of ['SIGINT','SIGTERM'])process.once(signal,()=>{interrupted=true;void stop();});
 try{
   browser=await chromium.launch({headless:true,chromiumSandbox:true,
+    ...(!softwareGPU&&process.platform==='darwin'&&!executablePath?{channel:'chromium',args:['--use-angle=metal']} : {}),
     ...(softwareGPU?{args:['--use-gl=angle','--use-angle=swiftshader']}:{}),
     ...(executablePath?{executablePath}:{})});
   // Exercise the art-free contributor experience even on full installations.
@@ -101,13 +103,14 @@ try{
       assert.equal(await page.locator('#membership-name').textContent(),name);
       await page.locator('#account-leaderboard').click();await page.locator('#boards').waitFor({state:'visible'});
       assert.equal(await page.locator('#my-score').textContent(),'0');
-      assert.equal(Number(await page.locator('#my-contribution').textContent()),0);
+      const contribution=(await page.locator('#my-contribution').textContent()).trim();assert.ok(contribution.length>0,'Rendered contribution must not be empty');assert.equal(Number(contribution),0);
       for(const width of [390,1366]){
         await page.setViewportSize({width,height:900});
         assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'Standings fit at '+width);
       }
       let graphics;
       if(fullGame){
+        if(['1','recovery'].includes(process.env.HI_BROWSER_FIRST_LIGHT)&&faction!=='closed')await page.route('**/api/account/me',async route=>{const response=await route.fetch(),data=await response.json();if(faction==='misanthropic')data.user=null;else data.user.membership={...data.user.membership,faction:'closed',lockedAt:123};await route.fulfill({response,json:data});});
         await page.goto(base+'/demo/index.html?faction='+faction+'&tutorial=1');
         // A caught loader error is displayed in-page, not emitted as pageerror.
         // Report it immediately rather than hiding the cause behind a timeout.
@@ -123,6 +126,7 @@ try{
         graphics=await page.evaluate(()=>window.hostileDemo.graphics().quality);
         assert.equal(graphics.shadowSize[0],4096);assert.equal(graphics.reflectionSize[0],2048);
         assert.equal(graphics.aoSamples,32);assert.equal(graphics.bloomStrength,.16);
+        if(['1','recovery'].includes(process.env.HI_BROWSER_FIRST_LIGHT))await runFirstLight(page,faction,report);
       }
       report.tests.push({faction,entry:true,missingArtNavigation:!fullGame,sourceModeForced:!fullGame&&forceSource,signup:true,refresh:true,login:true,zeroUnverifiedPoints:true,nativeZoom:true,...(graphics?{graphics}:{})});
       console.log('PASS '+name+' signup, allegiance, reload/login, history, zero unverified points'+(fullGame?', full-quality tutorial startup':', source workspace and missing-art routes'));

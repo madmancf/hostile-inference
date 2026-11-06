@@ -11,6 +11,7 @@ refer to the reader's own computer; this project has no hosted playable demo.
 | Follow simulation, server and result ownership | [Architecture](ARCHITECTURE.md) |
 | Run checks and understand their limits | [Testing](TESTING.md) |
 | Find focused contribution opportunities | [Roadmap](ROADMAP.md) |
+| Review the proposed continuous tutorial using the existing design | [First Light design brief — approved for review](designs/first-light-continuous-mission.md) |
 | Back up, restore or update an installation | [Operations](operations-0.20.md) |
 | Configure verification and recovery email | [Resend setup](email-setup-0.19.md) |
 | Review third-party licensing | [Notices](THIRD_PARTY_NOTICES.md) |

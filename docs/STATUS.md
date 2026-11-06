@@ -1,5 +1,48 @@
 # Release status and contributor audit
 
+## First Light 0.21.0 — 6 November 2026
+
+Version **0.21.0 adds the continuous First Light mission**. The working design and all
+39 full-quality runtime assets are retained. First Light now connects Defend,
+Sustain and Breach through 18 milestones covering the original 17 learning goals.
+Faction combat precedes the campus technology lessons. Ordinary resources,
+paid work and surviving units carry between chapters.
+
+The versioned tutorial save preserves older originals, gives an explicit choice
+between independent saves, and retains named recovery points after failure.
+Retries require confirmation and open paused. The debrief distinguishes the
+trained faction from account allegiance and uses authoritative results for rank,
+both rival bests and counted faction contribution.
+
+Local verification for this candidate:
+
+- 108 complete faction/rival/technology routes and 84 historical save fixtures
+  continued to victory; ordinary resource behavior and the frozen ranked hash
+  remained unchanged.
+- All 24 source suites passed. The updated ranked client and debrief also accepted
+  all six real local HTTP/replay-worker victories and their account standings.
+- One isolated headless Chrome for Testing process covered each faction's full
+  tutorial, practice operation, save/resume, cancelled and confirmed paused retry,
+  second-tab save ownership and literal rendering of hostile saved text.
+  Required tutorial controls fit 1280×800, 1440×900 and 1920×1080 at 100% zoom.
+- Those UI-driven practice runs ended in 15-minute timeouts for Misanthropic and
+  Closed AI, and a Broke victory at 699 seconds. Automated play is not evidence
+  of human enjoyment or competitive balance.
+- All ten portable-package checks passed, including exact assets/notices,
+  replay verification, account persistence and restart. The migration example
+  linked by the packaged recovery guide is included.
+- Native browser timing of normal checkpoint prepare+restore measured 0.3–0.4 ms p95
+  over 30 samples per faction. Separate Node tests covered larger states and an
+  envelope near the 600,000-character limit. These are diagnostic measurements,
+  not a frame-rate certificate.
+
+Full graphics remain enabled: 4096 shadows, 2048 reflections, 32 AO samples and
+existing bloom. Browser missions use a virtual clock; **60 FPS is not certified**; real-clock qualification is now underway.
+The six-newcomer observation and timed newcomer installation exercise have not
+been performed. The runtime package remains local; no hosted player service has been deployed.
+
+## Published baseline — 5 November 2026
+
 Reviewed 5 November 2026. **The source and all 39 full-quality runtime art files
 are public. A complete clone can run the game locally. No hosted player service
 has launched.**

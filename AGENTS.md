@@ -14,7 +14,7 @@ These instructions apply to Codex, Claude, Gemini and other coding assistants.
   `docs/ASSETS.md` for provenance. Source/procedural geometry remain MIT. New art
   needs its own provenance and distribution review; never add private masters.
 - Do not reduce shadows, textures, geometry, animation or other quality settings
-  to meet performance targets. 60 FPS certification is still deferred.
+  to meet performance targets. 60 FPS remains the target; certify it separately with real-clock measurements.
 
 ## Where to work
 

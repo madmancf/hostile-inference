@@ -67,8 +67,8 @@ should start with [AGENTS.md](AGENTS.md). All contributions receive maintainer r
 
 For development setup, read [Running on your own computer](docs/LOCAL_DEVELOPMENT.md).
 
-The doctor reports prerequisites and optional art availability without starting
-services. The source verification command needs no private art or credentials.
+The doctor checks prerequisites and art presence/size without starting services.
+It does not verify asset fingerprints; `npm run check:assets` does. The source verification command needs no private art or credentials.
 Choose additional checks from the [test map](tests/README.md) for your change.
 
 

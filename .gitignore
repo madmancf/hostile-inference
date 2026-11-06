@@ -90,6 +90,18 @@
 !/tests/demo.mjs
 !/tests/servers.mjs
 !/tests/tutorial.mjs
+!/tests/first-light-client.mjs
+!/tests/first-light-profile.mjs
+!/tests/first-light-browser.mjs
+!/tests/fixtures/
+/tests/fixtures/*
+!/tests/fixtures/first-light/
+/tests/fixtures/first-light/*
+!/tests/fixtures/first-light/historical-saves.json
+!/tests/fixtures/first-light/migration-example.json
+!/tests/fixtures/first-light/tutorial-v2.mjs
+!/tests/fixtures/first-light/local-archive-v2.mjs
+!/tests/fixtures/first-light/README.md
 !/tests/draw-batches.mjs
 !/tests/faction-assets.mjs
 !/tests/local-game.mjs
@@ -119,6 +131,9 @@
 !/tests/release.mjs
 
 /docs/*
+!/docs/designs/
+/docs/designs/*
+!/docs/designs/first-light-continuous-mission.md
 !/docs/README.md
 !/docs/THIRD_PARTY_NOTICES.md
 !/docs/LOCAL_DEVELOPMENT.md

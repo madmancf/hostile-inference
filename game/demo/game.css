@@ -120,3 +120,20 @@ body.cinematic,body.terrain-preview{display:block}body.cinematic .topbar,body.ci
 .mode-picker{margin:12px 0}.mode-picker label{display:block;font-size:14px;margin-bottom:6px}.mode-picker select{width:100%;padding:10px;font:inherit;border:1px solid #bcc5b4;background:#faf7ee;color:#243d32}.mode-picker p{font-size:13px!important;line-height:1.4!important;margin:6px 0!important}.training-ranked{display:inline-block;text-decoration:none;padding:14px 20px;margin:10px 0}.loading-screen button{margin-top:20px;padding:12px 20px;font:inherit}.loading-screen:has(#loading-retry:not([hidden])) i{display:none}.briefing-content{overflow-y:auto}
 
 .loading-screen progress{width:min(320px,75vw);height:5px;accent-color:#d97757;margin-top:24px}.loading-screen progress~i{display:none}
+
+/* First Light keeps the next order and recovery outside the scrolling curriculum. */
+.tutorial-panel{grid-template-rows:auto auto auto minmax(40px,1fr) auto}
+.lesson-order h2{font-size:22px;line-height:1.15;margin:4px 0 8px}
+.tutorial-panel #lesson-status{font-size:16px;line-height:1.35;color:#354b40;margin:6px 0}
+.lesson-order .lesson-task{margin:6px 0 8px}.lesson-order .lesson-task p{font-size:16px;line-height:1.35;margin:4px 0}
+.lesson-controls button,.lesson-controls .lesson-tools button,.tutorial-panel .lesson-tools #lesson-focus{min-height:44px;font-size:16px;line-height:1.2}
+#return-order,#training-retry{min-height:44px;font-size:16px}#save-choice{display:block;width:100%;min-height:44px;font-size:16px}
+#save-status{font-size:16px;line-height:1.35;color:#354b40;overflow-wrap:anywhere}
+#result-takeaway:empty{display:none}#result-takeaway{font-size:17px;line-height:1.4}
+.command-panel{grid-template-rows:44px minmax(0,1fr) auto}
+#save-status{white-space:normal;overflow:visible;text-overflow:clip;padding-block:5px}
+@media(min-width:1151px) and (max-height:850px){
+ .training{--rail:390px}.training .panel-page>section{padding:8px 12px}
+ .lesson-order .lesson-task{padding:4px 8px}.lesson-order .lesson-task b{display:none}
+ .lesson-order h2{margin:2px 0 6px}.lesson-progress{margin:5px 0}
+}
