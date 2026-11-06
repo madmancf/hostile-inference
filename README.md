@@ -94,7 +94,10 @@ are implemented. Automated tests cover replay integrity and recovery. Wider
 balance testing, independent newcomer playtests and hosted setup
 remain on the [roadmap](docs/ROADMAP.md).
 
-Full graphics are retained. **60 FPS remains a target awaiting certification.**
+Full graphics are retained. A [real-clock background test](docs/FPS.md) passed all
+three operations at approximately 60 FPS on an M4 Pro with Metal rendering.
+Physical display presentation, ordinary Chrome profiles and other hardware remain
+uncertified.
 The local server soak covered eight concurrent streams for 30 minutes; that is
 not a hosted capacity guarantee. No automatic deployment is configured.
 

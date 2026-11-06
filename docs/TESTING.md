@@ -53,3 +53,6 @@ CI has no production secrets. It does not finish entire tutorials, certify frame
 rate, validate rights or judge enjoyment.
 New engine behavior must have replay/determinism coverage; a rules-changing PR
 needs an explicit compatibility/season plan.
+
+See [full-quality FPS qualification](FPS.md) for the real-clock, hardware-rendered
+three-operation gate. Functional browser checks do not replace it.

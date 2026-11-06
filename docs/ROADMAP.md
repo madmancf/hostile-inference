@@ -21,8 +21,9 @@ tutorials, verified operations, local accounts and asynchronous leaderboards.
 - Automate verified backup rotation, readiness, disk/queue monitoring and
   recovery drills. No unattended jobs are installed by this repository.
 - Conduct independent newcomer playtests for each faction.
-- Certify 60 FPS on representative hardware at full graphics. Background browser
-  tests and past local averages do not establish this.
+- Extend the [measured background 60-Hz qualification](FPS.md) to physical display
+  presentation, ordinary Chrome profiles and representative hardware at full
+  graphics. Keep frame-pacing and combat-coverage requirements in every run.
 - Configure and test real email, owned domain, hosting/TLS, proxy trust,
   off-host backups, support and player-facing policies.
 

@@ -11,6 +11,7 @@ layout; no maintainer-only directory aliases are required.
 | `npm run dev:server` | Starts the contributor/game development server | Creates local private state under `.runtime/` |
 | `npm start` | Checks exact art fingerprints, then starts development | Same state as `dev:server`; missing art stops startup |
 | `npm run test:browser` | Runs background contributor/account UI checks | Own browser, temporary accounts and ignored reports |
+| `npm run test:fps` | Measures complete operations for all three factions with full graphics and real time | One owned background hardware-rendered browser; up to 45 minutes; private reports |
 | `npm run build` | Builds a full-art immutable runtime | Writes `dist/` and changes `dist/current.json` |
 | `npm run start:release` | Starts the currently selected package | Requires explicit runtime storage and origin settings |
 

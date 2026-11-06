@@ -10,6 +10,7 @@ source gate; the table identifies extra coverage or a useful focused loop.
 | Enemy tactics or balance | `node tests/enemy-ai.mjs`, `npm run test:enemy-balance` | Legal decisions across matchups; scripted wins alone do not prove fairness |
 | Tutorial progression | `node tests/tutorial.mjs`, full-art browser checks | Reachable lessons, correct faction cues and useful feedback |
 | Geometry or rendering | `node tests/faction-assets.mjs`, `node tests/draw-batches.mjs`, full-art browser checks | Structural correctness plus separate visual/frame-pacing review |
+| Gameplay frame pacing | `npm run test:fps` | Real-clock complete operations, hardware rendering, full graphics and minimum combat coverage; see [FPS scope](../docs/FPS.md) |
 | Sign-up or account UI | `npm run test:accounts`, `npm run test:account-abuse`, `npm run test:browser` | Ownership, faction intent, persistence and actual navigation |
 | Ranking rules | `npm run test:leaderboards` | Verified-only projection, ties and the approved contribution formula |
 | Journals, workers or recovery | `npm run test:ranked`, `npm run test:verification-jobs`, `npm run test:operations`, `npm run test:history` | Acknowledged commands survive; retries never settle twice |
@@ -62,8 +63,9 @@ operator test; do not add it to routine PR CI by accident.
 
 Fixtures and their source provenance are in
 [fixtures/first-light/README.md](fixtures/first-light/README.md). Test output stays
-under ignored `output/playwright/`. Independent newcomer playtests and quiet-host
-60 FPS certification remain separate acceptance work.
+under ignored `output/playwright/`. Independent newcomer playtests and foreground
+display / cross-device FPS qualification remain separate acceptance work; the
+[real-clock background result](../docs/FPS.md) has its own explicit scope.
 
 Use `HI_BROWSER_GAME=1 HI_BROWSER_FIRST_LIGHT=recovery npm run test:browser` for
 just the isolated reload/ownership/error cases. Browser checkpoint timings use

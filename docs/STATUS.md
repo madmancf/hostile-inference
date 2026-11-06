@@ -37,7 +37,14 @@ Local verification for this candidate:
   not a frame-rate certificate.
 
 Full graphics remain enabled: 4096 shadows, 2048 reflections, 32 AO samples and
-existing bloom. Browser missions use a virtual clock; **60 FPS is not certified**; real-clock qualification is now underway.
+existing bloom. The functional browser missions above use a virtual clock.
+A separate real-clock run on merged source `b4f232e` passed the **background
+60-Hz qualification for all three factions** in Chrome for Testing with Metal
+on an Apple M4 Pro. All three operations ended in victory over 25m 38.85s of
+active play: 59.997–60.002 average FPS, 17 ms p99 upper bounds, and zero gaps over
+100 ms. The largest interval was 33.4 ms. See [the full FPS result and reproduction
+steps](FPS.md); physical display presentation, ordinary Chrome profiles and other
+hardware remain uncertified.
 The six-newcomer observation and timed newcomer installation exercise have not
 been performed. The runtime package remains local; no hosted player service has been deployed.
 

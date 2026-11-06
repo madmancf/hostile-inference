@@ -30,7 +30,8 @@
     "test:capacity-soak": "node --expose-gc tests/capacity-soak.mjs",
     "build": "npm run check:assets && node scripts/build-release.mjs",
     "doctor": "node scripts/doctor.mjs",
-    "verify": "npm run check && npm run check:public && npm test"
+    "verify": "npm run check && npm run check:public && npm test",
+    "test:fps": "node tests/browser-fps.mjs"
   },
   "type": "module",
   "dependencies": {
