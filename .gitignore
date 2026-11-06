@@ -92,6 +92,8 @@
 !/tests/tutorial.mjs
 !/tests/first-light-client.mjs
 !/tests/first-light-profile.mjs
+!/tests/browser-fps.mjs
+!/tests/fps-commander.mjs
 !/tests/first-light-browser.mjs
 !/tests/fixtures/
 /tests/fixtures/*
@@ -143,6 +145,7 @@
 !/docs/ROADMAP.md
 !/docs/STATUS.md
 !/docs/TESTING.md
+!/docs/FPS.md
 !/docs/runtime-assets.json
 !/docs/operations-0.20.md
 !/docs/email-setup-0.19.md

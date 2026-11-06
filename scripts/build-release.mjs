@@ -57,7 +57,7 @@ const privateFiles=new Map();for(const name of apiFiles)privateFiles.set('api/'+
 privateFiles.set('LICENSE',await fs.readFile(path.join(root,'LICENSE')));
 // Keep the synthetic migration example available beside the packaged recovery guide.
 privateFiles.set('tests/fixtures/first-light/migration-example.json',await fs.readFile(path.join(root,'tests/fixtures/first-light/migration-example.json')));
-for(const name of ['ASSET_LICENSE.md','ASSETS.md','runtime-assets.json','LOCAL_DEVELOPMENT.md','TESTING.md'])privateFiles.set('docs/'+name,await fs.readFile(path.join(root,'docs',name)));
+for(const name of ['ASSET_LICENSE.md','ASSETS.md','runtime-assets.json','LOCAL_DEVELOPMENT.md','TESTING.md','FPS.md'])privateFiles.set('docs/'+name,await fs.readFile(path.join(root,'docs',name)));
 // Retain the former private layout so installed 0.20 update validators accept
 // this bundle. Both trees contain identical frozen rules and are hash-verified.
 for(const name of RULE_FILES){const bytes=await fs.readFile(path.join(source,name));privateFiles.set('game/'+name,bytes);privateFiles.set('design-preview/'+name,bytes);}
